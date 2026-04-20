@@ -205,6 +205,46 @@
       "dance_name": "Slowfoxtrot",
       "figures": [],
       "created_at": "2026-04-20T20:18:36.956Z"
+    },
+    {
+      "id": "f97060f4-3d8d-4c28-951e-af77b953f9f9",
+      "name": "Quickstep Routine",
+      "dance_type": "standard",
+      "dance_name": "Quickstep",
+      "figures": [
+        {
+          "id": "f5166b49-04f1-4de0-aeef-cbce26b3d295",
+          "figure_name": "Quarter Turn to Right",
+          "x": 120,
+          "y": 120,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-04-20T20:34:21.611Z"
+        },
+        {
+          "id": "4c6b66cf-1af7-4ee7-8c4b-d2d0abef241f",
+          "figure_name": "Progressive Chasse",
+          "x": 320,
+          "y": 40,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-04-20T20:34:23.583Z"
+        },
+        {
+          "id": "1b8f00ec-31a2-4ff1-99d0-790d7a730375",
+          "figure_name": "Progressive Chasse",
+          "x": 520,
+          "y": 200,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-04-20T20:34:26.234Z"
+        }
+      ],
+      "created_at": "2026-04-20T20:34:16.485Z",
+      "updated_at": "2026-04-20T20:34:48.207Z"
     }
   ]
 }

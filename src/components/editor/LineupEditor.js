@@ -15,7 +15,6 @@ import { FigureCard, FigureCardView } from './FigureCard';
 import { VaultFigure } from './VaultFigure';
 import { lineupService } from '@/lib/lineup-service';
 import { DANCES } from '@/lib/dance-data';
-import { TechManifest } from './TechManifest';
 import { clsx } from 'clsx';
 import { toPng } from 'html-to-image';
 
@@ -170,7 +169,6 @@ function CanvasContainer({
   stats = { count: 0, estTime: 0 }, 
   isCinematic = false, 
   setIsCinematic = () => {}, 
-  setIsTechModalOpen = () => {},
   zoom = 1.0,
   panOffset = { x: 0, y: 0 },
   onReset = () => {},
@@ -201,7 +199,7 @@ function CanvasContainer({
         }}
       ></div>
       
-      <div className="p-4 flex justify-between items-center bg-[#0e0e0e]/40 backdrop-blur-md relative z-10 border-b border-white/5 shrink-0">
+      <div className="p-4 pr-6 flex justify-between items-center bg-[#0e0e0e]/40 backdrop-blur-md relative z-10 border-b border-white/5 shrink-0">
         <h3 className={clsx(
           "text-[9px] font-black uppercase tracking-[0.4em] transition-colors",
           isOver ? "text-[#D4AF37]" : "text-white/40"
@@ -255,14 +253,6 @@ function CanvasContainer({
             title="Toggle Cinematic Mode"
           >
             <span className="material-symbols-outlined text-sm">{isCinematic ? 'visibility_off' : 'visibility'}</span>
-          </button>
-
-          <button 
-            onClick={() => setIsTechModalOpen(true)}
-            className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/5 text-white/40 hover:text-white transition-all border border-white/5"
-            title="View Tech Specs"
-          >
-            <span className="material-symbols-outlined text-sm">terminal</span>
           </button>
 
           <div className="w-px h-4 bg-white/5 mx-1"></div>
@@ -320,7 +310,6 @@ export function LineupEditor({ lineupId, initialLineup = [], danceType = 'standa
   const [activeFigure, setActiveFigure] = useState(null);
   const [isOverCanvas, setIsOverCanvas] = useState(false);
   const [isCinematic, setIsCinematic] = useState(false);
-  const [isTechModalOpen, setIsTechModalOpen] = useState(false);
 
   // Surgical Sync Effect: Only sync when the prop reference actually changes from the parent
   // and we are NOT in the middle of a drag.
@@ -539,7 +528,6 @@ export function LineupEditor({ lineupId, initialLineup = [], danceType = 'standa
             stats={stats}
             isCinematic={isCinematic}
             setIsCinematic={setIsCinematic}
-            setIsTechModalOpen={setIsTechModalOpen}
             zoom={zoom}
             panOffset={panOffset}
             onZoom={handleZoom}
@@ -581,7 +569,6 @@ export function LineupEditor({ lineupId, initialLineup = [], danceType = 'standa
         ) : null}
       </DragOverlay>
 
-      <TechManifest isOpen={isTechModalOpen} onClose={() => setIsTechModalOpen(false)} lineup={lineup} />
     </DndContext>
   );
 }
