@@ -1,19 +1,32 @@
-// Predefined ballroom figures for the Obsidian Stage library
-export const PREDEFINED_FIGURES = {
-  standard: [
-    { id: 'sw1', name: 'Natural Spin', category: 'Smooth Waltz • Advanced', type: 'spin' },
-    { id: 'sw2', name: 'Reverse Turn', category: 'Ballroom • Intermediate', type: 'transition' },
-    { id: 'sw3', name: 'Chasse from PP', category: 'Waltz • Core', type: 'transition' },
-    { id: 'sw4', name: 'Hover Corte', category: 'Waltz • Advanced', type: 'transition' },
-  ],
-  latin: [
-    { id: 'r1', name: 'Opening Out', category: 'Rumba • Advanced', type: 'transition' },
-    { id: 'r2', name: 'Aida', category: 'Rumba/Cha • Core', type: 'transition' },
-    { id: 'r3', name: 'Three Alemanas', category: 'Rumba • Pro', type: 'spin' },
-    { id: 'j1', name: 'Stop and Go', category: 'Jive • Core', type: 'transition' },
-  ],
-  breaking: [
-    { id: 'b1', name: 'Six Step', category: 'Breaking • Core', type: 'transition' },
-    { id: 'b2', name: 'Windmill', category: 'Power Move • Pro', type: 'spin' },
-  ]
+export const DANCE_FIGURES = {
+  standard: {
+    waltz: [
+      { id: 'w1', name: 'Closed Chasse', category: 'Basic' },
+      { id: 'w2', name: 'Natural Turn', category: 'Basic' },
+      { id: 'w3', name: 'Reverse Turn', category: 'Basic' },
+      { id: 'w4', name: 'Whisk', category: 'Standard' },
+      { id: 'w5', name: 'Chasse from Promenade Position', category: 'Standard' }
+    ],
+    tango: [
+      { id: 't1', name: 'Walk', category: 'Basic' },
+      { id: 't2', name: 'Progressive Side Step', category: 'Basic' },
+      { id: 't3', name: 'Progressive Link', category: 'Standard' },
+      { id: 't4', name: 'Closed Promenade', category: 'Standard' },
+      { id: 't5', name: 'Open Reverse Turn', category: 'Standard' }
+    ]
+  },
+  latin: {
+    cha_cha: [
+      { id: 'cc1', name: 'Cucaracha', category: 'Basic' },
+      { id: 'cc2', name: 'New York', category: 'Basic' },
+      { id: 'cc3', name: 'Hand to Hand', category: 'Basic' },
+      { id: 'cc4', name: 'Three Cha Chas', category: 'Standard' }
+    ],
+    rumba: [
+      { id: 'r1', name: 'Basic Movement', category: 'Basic' },
+      { id: 'r2', name: 'Cucaracha', category: 'Basic' },
+      { id: 'r3', name: 'Fan', category: 'Standard' },
+      { id: 'r4', name: 'Alemana', category: 'Standard' }
+    ]
+  }
 };

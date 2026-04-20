@@ -1,0 +1,14 @@
+{
+  "files.exclude": {
+    ".agents": true
+  },
+  "search.exclude": {
+    ".agents": true
+  },
+  "files.watcherExclude": {
+    "**/.agents/**": true,
+    "**/node_modules/**": true,
+    "**/.next/**": true
+  },
+  "css.lint.unknownAtRules": "ignore"
+}

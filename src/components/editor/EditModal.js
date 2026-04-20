@@ -1,116 +1,248 @@
 'use client';
 
-import { Button } from '@/components/ui/Button';
+import { useState, useEffect } from 'react';
 import { clsx } from 'clsx';
 
-export function EditModal({ isOpen, onClose, figure }) {
+export function EditModal({ isOpen, onClose, figure, onSave, onDelete }) {
+  const [notes, setNotes] = useState('');
+  const [videoUrls, setVideoUrls] = useState(['', '', '']); // [Primary, Alt A, Ref B]
+  const [imageUrls, setImageUrls] = useState(['', '']); // [Photo 1, Photo 2]
+  const [uploading, setUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (figure) {
+      setNotes(figure.notes || '');
+      // Ensure we have at least 3 slots for videos
+      const v = [...(figure.video_urls || [])];
+      while (v.length < 3) v.push('');
+      setVideoUrls(v);
+
+      // Ensure we have 2 slots for images
+      const img = [...(figure.image_urls || [])];
+      while (img.length < 2) img.push('');
+      setImageUrls(img);
+    }
+  }, [figure]);
+
+  const handleUpload = async (e, type, index) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploading(true);
+      
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('http://localhost:4000/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.statusText}`);
+      }
+
+      const { publicUrl } = await response.json();
+
+      if (type === 'video') {
+        const newUrls = [...videoUrls];
+        newUrls[index] = publicUrl;
+        setVideoUrls(newUrls);
+      } else {
+        const newUrls = [...imageUrls];
+        newUrls[index] = publicUrl;
+        setImageUrls(newUrls);
+      }
+    } catch (error) {
+      console.error('Error uploading:', error.message);
+      alert(`Upload failed: ${error.message}. Make sure the backend is running.`);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      await onSave({
+        ...figure,
+        notes,
+        video_urls: videoUrls.filter(u => u !== ''),
+        image_urls: imageUrls.filter(u => u !== '')
+      });
+    } catch (err) {
+      console.error('Modal Save Error:', err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (confirm('Are you sure you want to remove this figure from your lineup?')) {
+      try {
+        setIsSaving(true);
+        await onDelete(figure.id);
+      } catch (err) {
+        console.error('Modal Delete Error:', err);
+      } finally {
+        setIsSaving(false);
+      }
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 bg-black/80 backdrop-blur-sm overflow-hidden">
-      <div className="w-full h-full max-w-[1600px] glass-effect rounded-[2.5rem] overflow-hidden shadow-2xl flex flex-col md:flex-row relative border border-white/10">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 bg-black/60 backdrop-blur-sm overflow-hidden animate-in fade-in duration-300">
+      <div className="w-full h-full max-w-[1600px] glass-modal rounded-[2.5rem] overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.8)] flex flex-col md:flex-row relative">
         
-        {/* Sidebar Nav Shell */}
-        <aside className="hidden md:flex flex-col w-20 hover:w-64 transition-all duration-500 overflow-hidden bg-black/20 backdrop-blur-3xl z-40 border-r border-white/5 group">
-          <div className="flex flex-col h-full py-10">
-            <div className="px-5 mb-12 flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border border-white/10 ring-4 ring-white/5">
-                <img alt="User profile" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHazofDDMkPx-chXCEDNuP50T6-vjeB0b73jPbmswYzZfKEyXwSQuZ6drT4xfGgLacbRYTJ8k-gN2WRcfzVtU1O38zp6lTWN1HFLpoY6SkUr91kw8SKD7RGbjUlUFKwZm7105-SnXHWClJrCeQ7P7sYKAmxg37dEVzF_42l3FxSrfvaT6aJ7hfZCXaeEaS4ld0cRwhmlAsqkFonaPtz8l2PTYaQwm9yZzZW2vr2S8EJxUZDwqY8mYd3tGRds7-NvAsUUY-_iSxTZQ" />
-              </div>
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                <p className="font-headline font-semibold text-sm text-white">Curator</p>
-                <p className="font-label text-[10px] text-white/40 uppercase tracking-[0.1em]">Choreographer</p>
-              </div>
-            </div>
-            
-            <nav className="flex-1 px-5 space-y-8">
-              <span className="material-symbols-outlined text-white/40 cursor-default">grid_view</span>
-              <span className="material-symbols-outlined text-primary font-fill">auto_fix_high</span>
-              <span className="material-symbols-outlined text-white/40 cursor-default">accessibility_new</span>
-            </nav>
-          </div>
-        </aside>
-
-        {/* Main Area */}
-        <div className="flex-1 flex flex-col bg-transparent">
+        {/* Main Workspace Area */}
+        <div className="flex-1 flex flex-col min-h-0 bg-transparent overflow-hidden">
           {/* Top Bar */}
-          <header className="h-28 flex items-center justify-between px-10 border-b border-white/5 bg-white/5">
+          <header className="h-28 flex items-center justify-between px-10 border-b border-white/5 shrink-0">
             <div className="flex flex-col">
               <span className="text-[10px] font-label font-bold uppercase tracking-[0.25em] text-primary/80 mb-1">Figure Editing</span>
-              <h1 className="text-3xl font-headline font-black tracking-tight text-white uppercase">{figure?.name || 'The Obsidian Arc'}</h1>
+              <h1 className="text-3xl font-headline font-bold tracking-tight text-white">{figure?.figure_name}</h1>
             </div>
             <div className="flex items-center gap-6">
               <button 
                 onClick={onClose}
-                className="px-6 py-2.5 rounded-full font-label font-medium text-white/60 hover:text-white hover:bg-white/5 transition-all text-sm uppercase tracking-widest"
+                className="px-6 py-2.5 rounded-full font-label font-medium text-white/60 hover:text-white hover:bg-white/5 transition-all text-sm"
               >
                 Cancel
               </button>
-              <Button size="md" className="px-8 rounded-full" onClick={onClose}>
-                Save Changes
-              </Button>
+              <button 
+                onClick={handleSave}
+                disabled={uploading || isSaving}
+                className="px-8 py-3 rounded-full font-label font-bold bg-primary text-black shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all text-sm disabled:opacity-50 min-w-[140px]"
+              >
+                {isSaving ? 'Synchronizing...' : (uploading ? 'Uploading...' : 'Save Changes')}
+              </button>
             </div>
           </header>
 
-          {/* Canvas */}
-          <main className="flex-1 overflow-y-auto p-10 space-y-12 bg-white/2 overflow-x-hidden">
+          {/* Scrollable Content Canvas */}
+          <main className="flex-1 overflow-y-auto p-10 space-y-12 custom-scrollbar">
             <div className="grid grid-cols-12 gap-10">
-              {/* Media Displays */}
-              <div className="col-span-12 lg:col-span-8 space-y-10 text-left">
+              {/* Left Section: Video Displays */}
+              <div className="col-span-12 lg:col-span-8 space-y-10">
+                {/* Large Video 1: Primary Sequence */}
                 <section className="relative group">
                   <div className="w-full aspect-video rounded-[2rem] overflow-hidden bg-black border border-white/10 shadow-2xl relative">
-                    <img alt="Primary visual" className="w-full h-full object-cover brightness-75 transition-all duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeGnxhBa9EiWQiF-GQuJkj17wGTwutrdlC5fATv3w2cMzQkdufAqtmR2p_taNRCS_Y8CQjWI4JNclNGeANrheLvgSVDOHOydU5zzsx2hxkGj5ZzpJomRHr_7U6cDaNVwcrCRDFYKEwsOlBbFneLzP0ar6LfTCODXpcIvW3JTPRavWtEt8MeerfOzjSCUaqX2ieJ-Y_DXVzm17zcubQbmg2qsfwfUZ7DpW8ZnTnOiAqn27jW1abOIu6EIu9QyHOfmIPoEepiyZ7C8s" />
-                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
-                      <div className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
-                        <span className="material-symbols-outlined text-4xl text-white font-fill">play_arrow</span>
+                    {videoUrls[0] ? (
+                      <video src={videoUrls[0]} className="w-full h-full object-cover" controls />
+                    ) : (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 text-white/10 bg-white/5">
+                        <span className="material-symbols-outlined text-6xl">videocam</span>
+                        <label className="px-6 py-2 rounded-full border border-white/10 text-[10px] font-bold uppercase tracking-widest cursor-pointer hover:bg-white/5 transition-all">
+                          Upload Primary Sequence
+                          <input type="file" className="hidden" accept="video/*" onChange={(e) => handleUpload(e, 'video', 0)} />
+                        </label>
                       </div>
-                    </div>
+                    )}
                   </div>
-                  <div className="mt-5 flex justify-between items-center">
-                    <h3 className="font-headline font-bold text-xl text-white/90">Primary Sequence: Kinetic Flow</h3>
+                  <div className="mt-5 flex justify-between items-center px-2">
+                    <h3 className="font-headline font-semibold text-xl text-white/90 uppercase tracking-tight italic">Primary Sequence: Kinetic Flow</h3>
+                    {videoUrls[0] && (
+                      <label className="w-10 h-10 rounded-full flex items-center justify-center text-white/40 hover:text-white hover:bg-white/5 transition-colors cursor-pointer">
+                        <span className="material-symbols-outlined text-xl">file_upload</span>
+                        <input type="file" className="hidden" accept="video/*" onChange={(e) => handleUpload(e, 'video', 0)} />
+                      </label>
+                    )}
                   </div>
                 </section>
 
+                {/* Sub Videos Grid: Alt Angles */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <div className="aspect-video rounded-[1.5rem] overflow-hidden bg-white/5 border border-white/10 relative group">
-                      <img alt="Alt angle" className="w-full h-full object-cover grayscale opacity-60 group-hover:grayscale-0 transition-all duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8GR6lzenLFvf7cKeYiKKpY6rzhWnNHYRsFMM-i8vBt29wMhj6Xi9j65qpuwPGTddCQvQxNeZcCTLzwRY8n12bKrtimXnAQ89LcmLXYP8Rvh1FV6CtIlpi1Wjecc3DgvanJwZrYyefJpbIFj16LlVD2iNRbT2qrFPDIYbsU2Mt4hWCpQI_ZwUDSbGYSyWk0sRuOXePn4fHKRh5QRUIRlGNHDi8HEXvZH5XG3agDAatk2Wyr1gpLmlXG62MFpjUoPdyHJcjJyjZCBQ" />
-                      <div className="absolute top-4 left-4 glass-panel px-4 py-1.5 rounded-full text-[9px] font-black text-primary uppercase tracking-widest bg-black/40">Technical: Feet</div>
+                  {[1, 2].map(idx => (
+                    <div key={idx} className="space-y-4">
+                      <div className="aspect-video rounded-[1.5rem] overflow-hidden bg-white/5 border border-white/10 relative group">
+                        {videoUrls[idx] ? (
+                          <video src={videoUrls[idx]} className="w-full h-full object-cover" controls />
+                        ) : (
+                          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-white/10">
+                            <span className="material-symbols-outlined text-3xl">videocam</span>
+                            <label className="text-[8px] font-bold uppercase tracking-widest cursor-pointer hover:text-white/40">
+                              Upload Alt Angle {idx === 1 ? 'A' : 'B'}
+                              <input type="file" className="hidden" accept="video/*" onChange={(e) => handleUpload(e, 'video', idx)} />
+                            </label>
+                          </div>
+                        )}
+                        <div className="absolute top-4 left-4 glass-panel px-4 py-1.5 rounded-full text-[9px] font-bold text-primary uppercase tracking-[0.15em] backdrop-blur-md">
+                          Alt Angle {idx === 1 ? 'A' : 'B'}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="aspect-video rounded-[1.5rem] overflow-hidden bg-white/5 border border-white/10 relative group">
-                      <img alt="Reference" className="w-full h-full object-cover grayscale opacity-60 group-hover:grayscale-0 transition-all duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaRibj5LCDkzD5v9lD96n57qD-kPM-TULbGgoKzHFUF1Dz0NsRPtvsWEn6yVyeRJVblgi_2MIOH2n4_FIPrwGQBq8ZXxcHtZ_JxDLpvghxb0MhT8K-kXLmyASnLuuwv0VvaM77uNDIsoYOwgRLjc6iRFgdYTAV40vUOMEddVnCcvQx-ZyDrSzTnJa6T8eb2N6lFnLyJ4brCh_y9rXa9Ercm6Hcp579fI47d_toBdi78ySh6Bosr_Vg1PrlvqWtOGY6qk3M6xw9c7k" />
-                      <div className="absolute top-4 left-4 glass-panel px-4 py-1.5 rounded-full text-[9px] font-black text-primary uppercase tracking-widest bg-black/40">Technical: Arms</div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Sidebar: Notes */}
-              <div className="col-span-12 lg:col-span-4 space-y-10 text-left">
-                <section className="glass-effect p-8 rounded-[2rem] flex flex-col h-[400px] border border-white/5 bg-white/[0.03]">
+              {/* Right Sidebar: Notes & Photos */}
+              <div className="col-span-12 lg:col-span-4 space-y-10">
+                {/* Notes Section */}
+                <section className="glass-panel p-8 rounded-[2rem] flex flex-col h-[400px]">
                   <div className="flex items-center gap-3 mb-6">
-                    <span className="material-symbols-outlined text-primary font-fill">notes</span>
-                    <h2 className="font-headline font-black text-xl tracking-tight uppercase">Curator Notes</h2>
+                    <span className="material-symbols-outlined text-primary text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>notes</span>
+                    <h2 className="font-headline font-bold text-xl tracking-tight uppercase">Curator Notes</h2>
                   </div>
                   <textarea 
-                    className="flex-1 w-full bg-black/40 border border-white/5 rounded-2xl p-5 font-body text-sm text-white/70 focus:ring-1 focus:ring-primary/40 focus:bg-white/10 outline-none placeholder:text-white/20 resize-none transition-all" 
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    className="flex-1 w-full bg-white/5 border border-white/5 rounded-2xl p-5 font-body text-sm text-white/70 focus:ring-1 focus:ring-primary/40 focus:bg-white/10 outline-none placeholder:text-white/20 resize-none transition-all" 
                     placeholder="Enter technical feedback or choreographic adjustments..."
-                  ></textarea>
+                  />
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    <span className="px-4 py-1.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider cursor-pointer">#Alignment</span>
+                    <span className="px-4 py-1.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider cursor-pointer">#Timing</span>
+                  </div>
                 </section>
 
-                <section className="p-8 rounded-[2rem] border border-white/5 bg-white/[0.03] backdrop-blur-md">
+                {/* Photo Slots */}
+                <section className="space-y-6">
+                  <div className="flex items-center justify-between px-2">
+                    <h2 className="font-headline font-bold text-xl tracking-tight uppercase">Stills & Mood</h2>
+                  </div>
+                  <div className="grid grid-cols-2 gap-5">
+                    {[0, 1].map(idx => (
+                      <div key={idx} className="group relative aspect-square rounded-2xl overflow-hidden bg-white/5 border border-white/10">
+                        {imageUrls[idx] ? (
+                          <img src={imageUrls[idx]} className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-105" alt="Still" />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center text-white/10">
+                            <label className="cursor-pointer hover:text-white/20">
+                              <span className="material-symbols-outlined text-3xl">add_a_photo</span>
+                              <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUpload(e, 'image', idx)} />
+                            </label>
+                          </div>
+                        )}
+                        {imageUrls[idx] && (
+                           <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300 cursor-pointer">
+                              <span className="material-symbols-outlined text-white text-lg">edit</span>
+                              <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUpload(e, 'image', idx)} />
+                           </label>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* Metadata/Actions */}
+                <section className="p-8 rounded-[2rem] border border-white/5 bg-white/[0.03] backdrop-blur-md space-y-6">
                   <div className="space-y-5">
                     <div className="flex justify-between items-center">
-                      <span className="text-[10px] text-white/30 uppercase font-black tracking-widest">BPM Sync</span>
-                      <span className="text-primary font-black text-sm tracking-tighter">124 BPM</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-[10px] text-white/30 uppercase font-black tracking-widest">Difficulty</span>
-                      <span className="text-white font-bold text-sm tracking-tight uppercase">Master</span>
+                      <span className="text-[10px] text-white/30 uppercase font-bold tracking-[0.15em]">Figure Name</span>
+                      <span className="text-white/90 font-semibold text-sm uppercase italic">{figure?.figure_name}</span>
                     </div>
                   </div>
+                  <button 
+                    onClick={handleDelete}
+                    disabled={isSaving}
+                    className="w-full py-4 border border-red-900/20 text-red-500/40 hover:text-red-500 hover:bg-red-500/5 rounded-2xl text-[9px] font-black uppercase tracking-[0.3em] transition-all disabled:opacity-50"
+                  >
+                    {isSaving ? 'Removing...' : 'Remove Figure'}
+                  </button>
                 </section>
               </div>
             </div>

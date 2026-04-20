@@ -1,0 +1,210 @@
+{
+  "users": [
+    {
+      "id": "91a9da9c-c830-40bb-939d-d1a5bffa0a62",
+      "email": "jakubkalina05@gmail.com",
+      "password": "$2b$10$BWwFh/fZpV3sOLH2TiE5zO8P2L2oM9R76ZgiW2jv6jf.SwNw9iQfK",
+      "displayName": "jakubkalina05",
+      "created_at": "2026-04-18T20:46:31.306Z"
+    }
+  ],
+  "lineups": [
+    {
+      "id": "f3c6cce4-6668-420c-865f-59152386d442",
+      "user_id": "91a9da9c-c830-40bb-939d-d1a5bffa0a62",
+      "name": "Waltz Routine",
+      "dance_type": "standard",
+      "dance_name": "Waltz",
+      "figures": [
+        {
+          "id": "29f533bc-712f-407d-9c92-b19490ac66a3",
+          "figure_name": "Closed Changes",
+          "x": 100,
+          "y": 100,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-04-20T19:33:10.563Z"
+        },
+        {
+          "id": "feebbe64-ef47-4815-9e19-835b7fead79a",
+          "figure_name": "Natural Turn",
+          "x": 320,
+          "y": 120,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-04-20T19:33:12.971Z"
+        }
+      ],
+      "created_at": "2026-04-18T20:46:38.934Z",
+      "updated_at": "2026-04-20T20:18:35.315Z"
+    },
+    {
+      "id": "73d19249-9f74-46dc-9e7f-8815a63d2309",
+      "user_id": "91a9da9c-c830-40bb-939d-d1a5bffa0a62",
+      "name": "Tango Routine",
+      "dance_type": "standard",
+      "dance_name": "Tango",
+      "figures": [],
+      "created_at": "2026-04-18T20:47:30.661Z"
+    },
+    {
+      "id": "9c192a92-3b18-4af8-9e6f-93beb2d0a80d",
+      "user_id": "91a9da9c-c830-40bb-939d-d1a5bffa0a62",
+      "name": "Waltz Routine",
+      "dance_type": "standard",
+      "dance_name": "Waltz",
+      "figures": [
+        {
+          "id": "0ed8bd15-5376-4efb-b5f6-e4767b6f9d65",
+          "figure_name": "Closed Changes",
+          "x": 120,
+          "y": 120,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-04-19T23:30:41.227Z"
+        },
+        {
+          "id": "8c5750dc-34c8-4013-9de6-5cefa21da200",
+          "figure_name": "Closed Changes",
+          "x": 360,
+          "y": 120,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-04-19T23:30:42.772Z"
+        }
+      ],
+      "created_at": "2026-04-19T23:30:38.303Z",
+      "updated_at": "2026-04-20T10:52:16.758Z"
+    },
+    {
+      "id": "d7c4b7bd-08d1-41ee-817d-3fdfb97a11e7",
+      "user_id": "91a9da9c-c830-40bb-939d-d1a5bffa0a62",
+      "name": "Samba Routine",
+      "dance_type": "latin",
+      "dance_name": "Samba",
+      "figures": [
+        {
+          "id": "6c0ee697-3f0f-4654-999a-cdd9dcc1f53c",
+          "figure_name": "Natural Roll",
+          "x": 100,
+          "y": 100,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-04-20T20:17:43.408Z"
+        },
+        {
+          "id": "adfe3ca8-ea24-4482-ad74-613d1c26dc98",
+          "figure_name": "Natural Roll",
+          "x": 280,
+          "y": 320,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-04-20T20:17:43.923Z"
+        },
+        {
+          "id": "c5a1f573-e642-48c6-8b0e-1e1abd0bbebd",
+          "figure_name": "Natural Roll",
+          "x": 440,
+          "y": 160,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-04-20T20:17:44.073Z"
+        },
+        {
+          "id": "c43d659d-e4c3-4aae-bad3-9b8e03159167",
+          "figure_name": "Natural Roll",
+          "x": 280,
+          "y": 40,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-04-20T20:17:44.223Z"
+        },
+        {
+          "id": "818c9c2e-8315-481a-a069-036b1e7d3436",
+          "figure_name": "Side Samba Walk",
+          "x": 680,
+          "y": 80,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-04-20T20:17:57.992Z"
+        }
+      ],
+      "created_at": "2026-04-20T10:52:31.562Z",
+      "updated_at": "2026-04-20T20:18:12.164Z"
+    },
+    {
+      "id": "dc2abd9a-363e-468a-9559-e18656faf610",
+      "user_id": "91a9da9c-c830-40bb-939d-d1a5bffa0a62",
+      "name": "Rumba Routine",
+      "dance_type": "latin",
+      "dance_name": "Rumba",
+      "figures": [],
+      "created_at": "2026-04-20T10:52:39.571Z"
+    },
+    {
+      "id": "344717eb-a8ac-45bd-b1ee-6f75912728c0",
+      "user_id": "91a9da9c-c830-40bb-939d-d1a5bffa0a62",
+      "name": "Paso Doble Routine",
+      "dance_type": "latin",
+      "dance_name": "Paso Doble",
+      "figures": [],
+      "created_at": "2026-04-20T10:52:40.746Z"
+    },
+    {
+      "id": "b6554d49-4887-43f0-8336-0450847ac333",
+      "user_id": "91a9da9c-c830-40bb-939d-d1a5bffa0a62",
+      "name": "Jive Routine",
+      "dance_type": "latin",
+      "dance_name": "Jive",
+      "figures": [],
+      "created_at": "2026-04-20T10:52:41.846Z"
+    },
+    {
+      "id": "58c1cba1-f54b-469a-8c44-87308a3ccb85",
+      "name": "Waltz Routine - Copy",
+      "dance_type": "standard",
+      "dance_name": "Waltz",
+      "figures": [
+        {
+          "id": "79524dde-f96e-4943-bc04-2884cbf7ef72",
+          "figure_name": "Natural Turn",
+          "x": 100,
+          "y": 100,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-04-20T20:17:20.148Z"
+        },
+        {
+          "id": "03882523-c139-4ad0-89a4-ee5424e66013",
+          "figure_name": "Reverse Turn",
+          "x": 360,
+          "y": 80,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-04-20T20:17:20.903Z"
+        }
+      ],
+      "created_at": "2026-04-20T17:50:04.180Z",
+      "updated_at": "2026-04-20T20:17:36.288Z"
+    },
+    {
+      "id": "3014c31a-75c1-42e0-9ee9-c08ddbf42c14",
+      "name": "Slowfoxtrot Routine",
+      "dance_type": "standard",
+      "dance_name": "Slowfoxtrot",
+      "figures": [],
+      "created_at": "2026-04-20T20:18:36.956Z"
+    }
+  ]
+}

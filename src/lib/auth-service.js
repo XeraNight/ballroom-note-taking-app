@@ -38,7 +38,13 @@ export const signInWithAudit = async (email, password) => {
       .insert(logEntry);
 
     if (logError) {
-      console.error("Audit Log failed:", logError);
+      // If the error is just that the table doesn't exist yet, we only log it as a warning
+      // so it doesn't look like a critical system failure.
+      if (logError.code === '42P01') {
+        console.warn("Audit Log Table missing. Please apply the migration: supabase/migrations/20260407130000_create_audit_logs.sql");
+      } else {
+        console.error("Audit Log failed:", logError);
+      }
     }
   } catch (err) {
     console.error("Audit Log exception:", err);
