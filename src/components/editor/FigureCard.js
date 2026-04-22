@@ -1,11 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { clsx } from 'clsx';
 
-/**
- * FigureCardView - A pure visual representation of a figure card with optimized layout and working click areas.
- */
+
 export function FigureCardView({ 
   figure, 
   active, 
@@ -17,18 +16,8 @@ export function FigureCardView({
   style = {},
   danceType = 'standard'
 }) {
-  const handleDurationClick = (e) => {
-    e.preventDefault();
-    e.stopPropagation(); // CRITICAL: Stop event from bubbling to the edit overlay
-    const current = figure.duration || 8;
-    const val = prompt(`Enter duration (seconds/beats) for ${figure.figure_name || figure.name}:`, current);
-    if (val !== null) {
-      const num = parseInt(val);
-      if (!isNaN(num) && num > 0) {
-        if (figure.onUpdate) figure.onUpdate(figure.id, { duration: num });
-      }
-    }
-  };
+
+  const [isConfirming, setIsConfirming] = useState(false);
 
   return (
     <div 
@@ -45,27 +34,34 @@ export function FigureCardView({
           : "glass-card opacity-80 hover:opacity-100 hover:scale-[1.01] border-white/5"
       )}>
         
-        {/* EDIT OVERLAY - Now at z-10 to be behind interactive buttons but over background */}
-        <div 
+                <div 
            onClick={() => figure.onEdit && figure.onEdit(figure)}
            className="absolute inset-0 z-10 cursor-pointer"
         ></div>
 
-        {/* TOP INTERACTORS (Badge / Actions) - High Z-index */}
-        <div className="absolute top-2 right-2 flex gap-1 z-50">
+                <div className="absolute top-2 right-2 flex gap-1 z-50">
           <div className="flex gap-1 opacity-0 group-hover/card:opacity-100 transition-all translate-x-2 group-hover/card:translate-x-0">
              <button 
                 onClick={(e) => {
                   e.stopPropagation();
-                  const confirmed = window.confirm(`Are you sure you want to delete "${figure.figure_name || figure.name}"? This will also remove its notes and videos.`);
-                  if (confirmed && figure.onDelete) {
+                  if (!isConfirming) {
+                    setIsConfirming(true);
+                    setTimeout(() => setIsConfirming(false), 2000);
+                    return;
+                  }
+                  if (figure.onDelete) {
                     figure.onDelete(figure.id);
                   }
                 }}
-                className="w-5 h-5 rounded-md bg-black/60 backdrop-blur-md flex items-center justify-center hover:bg-red-500/40 hover:text-red-400 transition-all border border-white/10"
-                title="Delete Figure"
+                className={clsx(
+                  "w-5 h-5 rounded-md backdrop-blur-md flex items-center justify-center transition-all border",
+                  isConfirming 
+                    ? "bg-red-500 text-white border-red-500 scale-110" 
+                    : "bg-black/60 text-white/40 hover:bg-red-500/40 hover:text-red-400 border-white/10"
+                )}
+                title={isConfirming ? "Confirm Delete" : "Delete Figure"}
               >
-                <span className="material-symbols-outlined text-[10px]">close</span>
+                <span className="material-symbols-outlined text-[10px]">{isConfirming ? "check" : "close"}</span>
               </button>
               
               {isDraggable && (
@@ -89,8 +85,7 @@ export function FigureCardView({
           </div>
         </div>
 
-        {/* TOP ROW: Visual Icon */}
-        <div className="flex justify-between items-start relative z-20 pointer-events-none">
+                <div className="flex justify-between items-start relative z-20 pointer-events-none">
           <div className={clsx(
             "w-5 h-5 rounded-md overflow-hidden flex items-center justify-center transition-colors",
             active ? "bg-[#D4AF37]/20" : "bg-white/5"
@@ -107,8 +102,7 @@ export function FigureCardView({
           </div>
         </div>
 
-        {/* MIDDLE: Name & Category */}
-        <div className="space-y-0.5 relative z-20 pointer-events-none">
+                <div className="space-y-0.5 relative z-20 pointer-events-none">
           <p className={clsx(
             "font-bold text-xs leading-tight uppercase font-headline transition-colors line-clamp-2",
             active ? "text-white" : "text-white/80 group-hover/card:text-white"
@@ -122,15 +116,13 @@ export function FigureCardView({
           </p>
         </div>
 
-        {/* BOTTOM: Progress & Timing (Z-50 to ensure clickability) */}
-        <div className="space-y-1.5 relative z-50">
+                <div className="space-y-1.5 relative z-50">
           <div className="flex justify-end pr-0.5">
-            <button 
-                onClick={handleDurationClick}
-                className="text-[6px] font-black text-white/20 hover:text-primary transition-all bg-black/40 backdrop-blur-md py-0.5 px-2 rounded-full border border-white/10 z-50 uppercase tracking-widest"
+            <div 
+                className="text-[6px] font-black text-white/20 bg-black/40 backdrop-blur-md py-0.5 px-2 rounded-full border border-white/10 z-50 uppercase tracking-widest"
               >
                 {figure.duration || 8}s
-            </button>
+            </div>
           </div>
           <div className="h-0.5 bg-white/5 rounded-full overflow-hidden">
             <div 
@@ -146,9 +138,7 @@ export function FigureCardView({
   );
 }
 
-/**
- * FigureCard - The draggable wrapper for the figure card.
- */
+
 export function FigureCard({ figure, active, pos, isDraggable = true, danceType = 'standard' }) {
   const {
     attributes,

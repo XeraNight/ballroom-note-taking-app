@@ -15,7 +15,7 @@ export function Sidebar() {
 
   const { data: lineups, refetch } = useQuery({
     queryKey: ['lineups'],
-    queryFn: () => lineupService.listLineups(), // Updated to the public list method
+    queryFn: () => lineupService.listLineups(),
   });
 
   const isStandard = danceType === 'standard';
@@ -46,8 +46,7 @@ export function Sidebar() {
     <aside className="fixed left-6 top-1/2 -translate-y-1/2 z-40 flex flex-col w-64 rounded-[2.5rem] h-[85vh] shadow-2xl border border-white/5 bg-white/[0.01] backdrop-blur-[40px] overflow-hidden">
       <div className="flex flex-col h-full py-10 px-4">
         
-        {/* Environment Switcher */}
-        <div className="flex flex-col items-center gap-4 w-full px-4 mb-6">
+                <div className="flex flex-col items-center gap-4 w-full px-4 mb-6">
           <div className="flex gap-4 p-1.5 bg-black/20 rounded-2xl border border-white/5 backdrop-blur-md">
             <button 
               onClick={() => setType('standard')}
@@ -56,7 +55,7 @@ export function Sidebar() {
                 isStandard ? "bg-[#D4AF37] text-black shadow-[0_0_20px_rgba(212,175,55,0.3)]" : "text-white/20 hover:text-white/40"
               )}
             >
-              <span className="material-symbols-outlined text-lg italic" style={{ fontVariationSettings: "'FILL' 1" }}>skateboarding</span>
+              <span className="material-symbols-outlined text-lg italic" style={{ fontVariationSettings: "'FILL' 1" }}>waves</span>
             </button>
             <button 
               onClick={() => setType('latin')}
@@ -70,8 +69,7 @@ export function Sidebar() {
           </div>
         </div>
 
-        {/* Global Navigation */}
-        <nav className="w-full px-2 mb-4">
+                <nav className="w-full px-2 mb-4">
            <Link 
             href="/dashboard" 
             className={clsx(
@@ -89,8 +87,7 @@ export function Sidebar() {
             </Link>
         </nav>
 
-        {/* Dance Vault - Utilizing Space Vertically */}
-        <div className="flex-1 flex flex-col min-h-0">
+                <div className="flex-1 flex flex-col min-h-0">
            <div className="flex items-center justify-between px-6 mb-4">
              <span className="text-[8px] font-black text-white/10 uppercase tracking-[0.4em] italic">Dance Vault</span>
              <div className={clsx("w-1.5 h-1.5 rounded-full animate-pulse", isStandard ? "bg-[#D4AF37]/40" : "bg-red-500/40")}></div>
@@ -118,8 +115,7 @@ export function Sidebar() {
                         <span className="text-[10px] font-black tracking-[0.1em] uppercase">{dance.name}</span>
                       </div>
                       
-                      {/* Hover Accent */}
-                      <div className={clsx(
+                                            <div className={clsx(
                         "absolute inset-0 opacity-0 group-hover/dance:opacity-5 transition-opacity duration-700",
                         isStandard ? "bg-[#D4AF37]" : "bg-red-500"
                       )}></div>
@@ -130,8 +126,7 @@ export function Sidebar() {
            </nav>
         </div>
 
-        {/* Branding/Footer Section (Replaced Settings) */}
-        <div className="w-full px-2 mt-4 border-t border-white/5 pt-6 text-center">
+                <div className="w-full px-2 mt-4 border-t border-white/5 pt-6 text-center">
           <p className="text-[8px] font-black text-white/10 uppercase tracking-[0.5em] italic">Obsidian Stage</p>
           <p className="text-[7px] font-bold text-white/5 uppercase mt-1">Public Edition v1.0</p>
         </div>

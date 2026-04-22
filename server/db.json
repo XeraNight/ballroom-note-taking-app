@@ -15,30 +15,9 @@
       "name": "Waltz Routine",
       "dance_type": "standard",
       "dance_name": "Waltz",
-      "figures": [
-        {
-          "id": "29f533bc-712f-407d-9c92-b19490ac66a3",
-          "figure_name": "Closed Changes",
-          "x": 100,
-          "y": 100,
-          "notes": "",
-          "video_urls": [],
-          "image_urls": [],
-          "created_at": "2026-04-20T19:33:10.563Z"
-        },
-        {
-          "id": "feebbe64-ef47-4815-9e19-835b7fead79a",
-          "figure_name": "Natural Turn",
-          "x": 320,
-          "y": 120,
-          "notes": "",
-          "video_urls": [],
-          "image_urls": [],
-          "created_at": "2026-04-20T19:33:12.971Z"
-        }
-      ],
+      "figures": [],
       "created_at": "2026-04-18T20:46:38.934Z",
-      "updated_at": "2026-04-20T20:18:35.315Z"
+      "updated_at": "2026-04-22T10:54:08.084Z"
     },
     {
       "id": "73d19249-9f74-46dc-9e7f-8815a63d2309",
@@ -86,60 +65,9 @@
       "name": "Samba Routine",
       "dance_type": "latin",
       "dance_name": "Samba",
-      "figures": [
-        {
-          "id": "6c0ee697-3f0f-4654-999a-cdd9dcc1f53c",
-          "figure_name": "Natural Roll",
-          "x": 100,
-          "y": 100,
-          "notes": "",
-          "video_urls": [],
-          "image_urls": [],
-          "created_at": "2026-04-20T20:17:43.408Z"
-        },
-        {
-          "id": "adfe3ca8-ea24-4482-ad74-613d1c26dc98",
-          "figure_name": "Natural Roll",
-          "x": 280,
-          "y": 320,
-          "notes": "",
-          "video_urls": [],
-          "image_urls": [],
-          "created_at": "2026-04-20T20:17:43.923Z"
-        },
-        {
-          "id": "c5a1f573-e642-48c6-8b0e-1e1abd0bbebd",
-          "figure_name": "Natural Roll",
-          "x": 440,
-          "y": 160,
-          "notes": "",
-          "video_urls": [],
-          "image_urls": [],
-          "created_at": "2026-04-20T20:17:44.073Z"
-        },
-        {
-          "id": "c43d659d-e4c3-4aae-bad3-9b8e03159167",
-          "figure_name": "Natural Roll",
-          "x": 280,
-          "y": 40,
-          "notes": "",
-          "video_urls": [],
-          "image_urls": [],
-          "created_at": "2026-04-20T20:17:44.223Z"
-        },
-        {
-          "id": "818c9c2e-8315-481a-a069-036b1e7d3436",
-          "figure_name": "Side Samba Walk",
-          "x": 680,
-          "y": 80,
-          "notes": "",
-          "video_urls": [],
-          "image_urls": [],
-          "created_at": "2026-04-20T20:17:57.992Z"
-        }
-      ],
+      "figures": [],
       "created_at": "2026-04-20T10:52:31.562Z",
-      "updated_at": "2026-04-20T20:18:12.164Z"
+      "updated_at": "2026-04-22T10:54:00.565Z"
     },
     {
       "id": "dc2abd9a-363e-468a-9559-e18656faf610",
@@ -157,7 +85,8 @@
       "dance_type": "latin",
       "dance_name": "Paso Doble",
       "figures": [],
-      "created_at": "2026-04-20T10:52:40.746Z"
+      "created_at": "2026-04-20T10:52:40.746Z",
+      "updated_at": "2026-04-22T10:54:19.566Z"
     },
     {
       "id": "b6554d49-4887-43f0-8336-0450847ac333",
@@ -166,7 +95,8 @@
       "dance_type": "latin",
       "dance_name": "Jive",
       "figures": [],
-      "created_at": "2026-04-20T10:52:41.846Z"
+      "created_at": "2026-04-20T10:52:41.846Z",
+      "updated_at": "2026-04-22T10:54:24.179Z"
     },
     {
       "id": "58c1cba1-f54b-469a-8c44-87308a3ccb85",
@@ -211,40 +141,25 @@
       "name": "Quickstep Routine",
       "dance_type": "standard",
       "dance_name": "Quickstep",
-      "figures": [
-        {
-          "id": "f5166b49-04f1-4de0-aeef-cbce26b3d295",
-          "figure_name": "Quarter Turn to Right",
-          "x": 120,
-          "y": 120,
-          "notes": "",
-          "video_urls": [],
-          "image_urls": [],
-          "created_at": "2026-04-20T20:34:21.611Z"
-        },
-        {
-          "id": "4c6b66cf-1af7-4ee7-8c4b-d2d0abef241f",
-          "figure_name": "Progressive Chasse",
-          "x": 320,
-          "y": 40,
-          "notes": "",
-          "video_urls": [],
-          "image_urls": [],
-          "created_at": "2026-04-20T20:34:23.583Z"
-        },
-        {
-          "id": "1b8f00ec-31a2-4ff1-99d0-790d7a730375",
-          "figure_name": "Progressive Chasse",
-          "x": 520,
-          "y": 200,
-          "notes": "",
-          "video_urls": [],
-          "image_urls": [],
-          "created_at": "2026-04-20T20:34:26.234Z"
-        }
-      ],
+      "figures": [],
       "created_at": "2026-04-20T20:34:16.485Z",
-      "updated_at": "2026-04-20T20:34:48.207Z"
+      "updated_at": "2026-04-21T20:15:22.110Z"
+    },
+    {
+      "id": "9371998d-7314-4376-a8ff-47d26723bf9f",
+      "name": "Cha-Cha-Cha Routine",
+      "dance_type": "latin",
+      "dance_name": "Cha-Cha-Cha",
+      "figures": [],
+      "created_at": "2026-04-21T18:51:05.719Z"
+    },
+    {
+      "id": "d43e2c33-40c7-4f0e-a687-d4a4a89451df",
+      "name": "Viennese Waltz Routine",
+      "dance_type": "standard",
+      "dance_name": "Viennese Waltz",
+      "figures": [],
+      "created_at": "2026-04-21T19:54:15.866Z"
     }
   ]
 }

@@ -5,7 +5,6 @@ const getHeaders = () => ({
 });
 
 export const lineupService = {
-  // --- Lineups (Routines) ---
   
   async listLineups() {
     try {
@@ -25,7 +24,7 @@ export const lineupService = {
         headers: getHeaders()
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Failed to fetch lineup');
+      if (!response.ok) throw new Error(data.message || data.code || 'Failed to fetch lineup');
       return { data, error: null };
     } catch (error) {
       return { data: null, error };
@@ -40,7 +39,7 @@ export const lineupService = {
         body: JSON.stringify({ name, dance_type: danceType, dance_name: danceName })
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Failed to create lineup');
+      if (!response.ok) throw new Error(data.message || data.code || 'Failed to create lineup');
       return { data, error: null };
     } catch (error) {
       return { data: null, error };
@@ -55,14 +54,12 @@ export const lineupService = {
         body: JSON.stringify({ id })
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Failed to delete lineup');
+      if (!response.ok) throw new Error(data.message || data.code || 'Failed to delete lineup');
       return { success: true, error: null };
     } catch (error) {
       return { success: false, error };
     }
   },
-
-  // --- Figures ---
 
   async addFigure(lineupId, figureName, x, y) {
     try {
@@ -72,7 +69,7 @@ export const lineupService = {
         body: JSON.stringify({ lineup_id: lineupId, figure_name: figureName, x, y })
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Failed to add figure');
+      if (!response.ok) throw new Error(data.message || data.code || 'Failed to add figure');
       return { data, error: null };
     } catch (error) {
       return { data: null, error };
@@ -87,7 +84,7 @@ export const lineupService = {
         body: JSON.stringify({ lineup_id: lineupId, id: figureId, ...updates })
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Failed to update figure');
+      if (!response.ok) throw new Error(data.message || data.code || 'Failed to update figure');
       return { data, error: null };
     } catch (error) {
       return { data: null, error };

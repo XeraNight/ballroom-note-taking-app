@@ -3,82 +3,59 @@ const lineupAbl = require('../abl/lineup-abl');
 
 const router = express.Router();
 
-// Public Access Endpoints (Authentication removed for assignment compliance)
+/**
+ * Helper to handle BCAA structured responses and errors.
+ */
+const handleCommand = async (res, action, dtoIn) => {
+    try {
+        const dtoOut = await action(dtoIn);
+        res.json(dtoOut);
+    } catch (error) {
+        // If it's a BCAA-style error object
+        if (error.code) {
+            const status = error.code === 'invalidDtoIn' ? 400 : (error.code.includes('NotFound') ? 404 : 500);
+            return res.status(status).json(error);
+        }
+        // Generic fallback error
+        res.status(500).json({
+            type: 'error',
+            code: 'internalError',
+            message: error.message,
+            parameters: {}
+        });
+    }
+};
 
-// List routines
+// --- LINEUP COMMANDS ---
+
 router.get('/lineup/list', async (req, res) => {
-    try {
-        const data = await lineupAbl.listLineups();
-        res.json(data);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+    await handleCommand(res, lineupAbl.list.bind(lineupAbl), req.query);
 });
 
-// Get routine detail
 router.get('/lineup/get', async (req, res) => {
-    try {
-        const { id } = req.query;
-        const data = await lineupAbl.getLineupDetail(id);
-        res.json(data);
-    } catch (error) {
-        res.status(404).json({ error: error.message });
-    }
+    await handleCommand(res, lineupAbl.get.bind(lineupAbl), req.query);
 });
 
-// Create routine
 router.post('/lineup/create', async (req, res) => {
-    try {
-        const { name, dance_type, dance_name } = req.body;
-        const data = await lineupAbl.createLineup(name, dance_type, dance_name);
-        res.json(data);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
+    await handleCommand(res, lineupAbl.create.bind(lineupAbl), req.body);
 });
 
-// Add figure to routine
-router.post('/figure/add', async (req, res) => {
-    try {
-        const { lineup_id, figure_name, x, y } = req.body;
-        const data = await lineupAbl.addFigureToLineup(lineup_id, figure_name, x, y);
-        res.json(data);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
-
-// Update routine figures (Infinite Stage persistence)
-router.post('/figure/reorder', async (req, res) => {
-    try {
-        const { lineup_id, figures } = req.body;
-        const data = await lineupAbl.updateLineupFigures(lineup_id, figures);
-        res.json(data);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
-
-// Update single figure details
-router.post('/figure/update', async (req, res) => {
-    try {
-        const { lineup_id, id, ...updates } = req.body;
-        const data = await lineupAbl.updateSingleFigure(lineup_id, id, updates);
-        res.json(data);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
-
-// Delete routine
 router.post('/lineup/delete', async (req, res) => {
-    try {
-        const { id } = req.body;
-        const data = await lineupAbl.deleteLineup(id);
-        res.json(data);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
+    await handleCommand(res, lineupAbl.delete.bind(lineupAbl), req.body);
+});
+
+// --- FIGURE COMMANDS ---
+
+router.post('/figure/add', async (req, res) => {
+    await handleCommand(res, lineupAbl.addFigure.bind(lineupAbl), req.body);
+});
+
+router.post('/figure/reorder', async (req, res) => {
+    await handleCommand(res, lineupAbl.updateFigures.bind(lineupAbl), req.body);
+});
+
+router.post('/figure/update', async (req, res) => {
+    await handleCommand(res, lineupAbl.updateFigure.bind(lineupAbl), req.body);
 });
 
 module.exports = router;

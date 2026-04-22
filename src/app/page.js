@@ -7,7 +7,6 @@ export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Public Access Version: Redirect straight to dashboard
     router.push('/dashboard');
   }, [router]);
 

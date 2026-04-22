@@ -11,9 +11,6 @@ export function VaultFigure({ figure, onAdd, danceType = 'standard' }) {
       figure: figure,
     },
   });
-
-  // Source item in the library stays static to prevent horizontal scrolling issues.
-  // The DragOverlay in LineupEditor handles the visual movement.
   return (
     <div 
       ref={setNodeRef}

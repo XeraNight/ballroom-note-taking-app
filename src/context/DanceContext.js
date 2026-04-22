@@ -5,9 +5,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 const DanceContext = createContext();
 
 export function DanceProvider({ children }) {
-  const [danceType, setDanceType] = useState('standard'); // 'standard' or 'latin'
-
-  // Presistence
+  const [danceType, setDanceType] = useState('standard');
   useEffect(() => {
     const saved = localStorage.getItem('obsidian_dance_type');
     if (saved) setDanceType(saved);

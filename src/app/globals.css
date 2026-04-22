@@ -37,7 +37,6 @@
   --error: #ffb4ab;
 }
 
-/* --- Dynamic Theme Definitions --- */
 .theme-standard {
   --accent-color: #5a2be2;
   --accent-glow: rgba(90, 43, 226, 0.08);
@@ -64,7 +63,6 @@
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
-/* --- Consolidated Glass System --- */
 
 .glass-panel {
   background: rgba(23, 23, 23, 0.95);
@@ -102,7 +100,6 @@
   box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
 }
 
-/* --- Brand Gradients --- */
 
 .standard-gradient {
   background: linear-gradient(135deg, var(--standard-blue) 0%, var(--standard-lavender) 100%);
@@ -124,7 +121,6 @@
   background-size: 40px 40px;
 }
 
-/* --- Scrollbar Customization --- */
 .custom-scrollbar::-webkit-scrollbar {
   width: 3px;
   height: 3px;
@@ -152,4 +148,50 @@ body {
     radial-gradient(at 100% 100%, var(--accent-glow) 0px, transparent 50%);
   background-attachment: fixed;
   transition: background-image 1s ease;
+}
+
+/* Exact Uiverse Neo-Brutalist Buttons - Light Accent Edition */
+.btn-neo {
+  font-family: inherit !important;
+  padding: 0.4em 1em !important; /* Tightened padding */
+  font-weight: 900 !important;
+  font-size: 11px !important; /* Standard compact font size */
+  border: 2px solid white !important; /* Thinner border for smaller size */
+  border-radius: 0.4em !important;
+  box-shadow: 0.15em 0.15em white !important;
+  cursor: pointer !important;
+  transition: all 0.1s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+}
+
+.btn-neo-primary {
+  background: #fbca1f !important;
+  color: black !important;
+}
+
+.btn-neo-error {
+  background: #ef4444 !important;
+  color: white !important;
+}
+
+.btn-neo:hover {
+  transform: translate(-0.05em, -0.05em) !important;
+  box-shadow: 0.25em 0.25em white !important;
+}
+
+.btn-neo:active {
+  transform: translate(0.05em, 0.05em) !important;
+  box-shadow: 0.05em 0.05em white !important;
+}
+
+.btn-neo:disabled {
+  background: #444 !important;
+  color: #888 !important;
+  box-shadow: none !important;
+  border-color: #222 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
 }

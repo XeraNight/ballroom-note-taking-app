@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   DndContext, 
   KeyboardSensor, 
@@ -169,8 +169,7 @@ function CanvasContainer({
   stats = { count: 0, estTime: 0 }, 
   isCinematic = false, 
   setIsCinematic = () => {}, 
-  zoom = 1.0,
-  panOffset = { x: 0, y: 0 },
+  viewport = { x: 0, y: 0, scale: 1 },
   onReset = () => {},
   onZoom = () => {},
   lineup = [],
@@ -194,7 +193,7 @@ function CanvasContainer({
         style={{ 
           backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)`,
           backgroundSize: `${GRID_SIZE}px ${GRID_SIZE}px`,
-          transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${zoom})`,
+          transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.scale})`,
           transformOrigin: '0 0'
         }}
       ></div>
@@ -226,7 +225,7 @@ function CanvasContainer({
               <span className="material-symbols-outlined text-[14px]">remove</span>
             </button>
             <div className="flex items-center px-2 text-[9px] font-black text-primary/60 min-w-[40px] justify-center bg-[#0e0e0e]/20">
-              {Math.round(zoom * 100)}%
+              {Math.round(viewport.scale * 100)}%
             </div>
             <button 
               onClick={() => onZoom(0.1)}
@@ -260,7 +259,7 @@ function CanvasContainer({
           <button 
             onClick={onExport}
             className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/5 text-white/40 hover:text-white transition-all border border-white/5"
-            title="Download Studio Image"
+            title="Download Canvas Image"
           >
             <span className="material-symbols-outlined text-sm">download</span>
           </button>
@@ -268,19 +267,15 @@ function CanvasContainer({
           <button 
             onClick={isSaving || activeFigure ? () => {} : onSave} 
             disabled={isSaving}
-            className={clsx(
-              "font-black py-1.5 px-4 rounded-lg border transition-all text-[8px] uppercase tracking-widest min-w-[70px]",
-              isSaving ? "bg-white/10 text-white/20 border-white/5" : "bg-white/5 text-white/40 border-white/5 hover:bg-white/10 hover:text-white"
-            )}
+            className="btn-neo btn-neo-primary"
           >
             {isSaving ? 'Syncing...' : 'Save'}
           </button>
           <button 
             onClick={activeFigure ? () => {} : onCreate}
-            className="bg-[#D4AF37] text-on-primary font-black py-1.5 px-4 rounded-lg shadow-lg shadow-[#D4AF37]/20 hover:scale-[1.02] transition-all flex items-center gap-2 text-[8px] uppercase tracking-widest"
+            className="btn-neo btn-neo-error"
           >
-            <span className="material-symbols-outlined text-sm">add_circle</span>
-            New Routine
+            Reset Canvas
           </button>
         </div>
       </div>
@@ -298,8 +293,7 @@ export function LineupEditor({ lineupId, initialLineup = [], danceType = 'standa
   };
 
   const [lineup, setLineup] = useState(initialLineup);
-  const [zoom, setZoom] = useState(1);
-  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+  const [viewport, setViewport] = useState({ x: 0, y: 0, scale: 1 });
   const [isPanning, setIsPanning] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [startPanPos, setStartPanPos] = useState({ x: 0, y: 0 });
@@ -310,9 +304,8 @@ export function LineupEditor({ lineupId, initialLineup = [], danceType = 'standa
   const [activeFigure, setActiveFigure] = useState(null);
   const [isOverCanvas, setIsOverCanvas] = useState(false);
   const [isCinematic, setIsCinematic] = useState(false);
-
-  // Surgical Sync Effect: Only sync when the prop reference actually changes from the parent
-  // and we are NOT in the middle of a drag.
+  const [toast, setToast] = useState(null);
+  const [isPromptingNew, setIsPromptingNew] = useState(false);
   useEffect(() => {
     if (!activeId && initialLineup !== prevLineupProp.current) {
       setLineup(initialLineup);
@@ -320,38 +313,71 @@ export function LineupEditor({ lineupId, initialLineup = [], danceType = 'standa
     }
   }, [initialLineup, activeId]);
 
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 4000);
+  };
+
+  const handleZoom = useCallback((delta, mouseX = null, mouseY = null) => {
+    setViewport(prev => {
+      const nextScale = Math.min(Math.max(prev.scale * Math.exp(delta), 0.25), 3);
+      
+      if (mouseX !== null && mouseY !== null) {
+        const ratio = nextScale / prev.scale;
+        return {
+          scale: nextScale,
+          x: mouseX - (mouseX - prev.x) * ratio,
+          y: mouseY - (mouseY - prev.y) * ratio,
+        };
+      }
+      
+      return { ...prev, scale: nextScale };
+    });
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const handleWheel = (e) => {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      if (e.ctrlKey) {
+        const delta = -e.deltaY * 0.005;
+        handleZoom(delta, mouseX, mouseY);
+      } else {
+        setViewport(prev => ({
+          ...prev,
+          x: prev.x - e.deltaX,
+          y: prev.y - e.deltaY
+        }));
+      }
+    };
+
+    canvas.addEventListener('wheel', handleWheel, { passive: false });
+    return () => canvas.removeEventListener('wheel', handleWheel);
+  }, [handleZoom]);
+
   const handlePanStart = (e) => {
     if (e.target.id === 'canvas-stage' || e.target.id === 'canvas-background-grid') {
       setIsPanning(true);
-      setStartPanPos({ x: e.clientX - panOffset.x, y: e.clientY - panOffset.y });
+      setStartPanPos({ x: e.clientX - viewport.x, y: e.clientY - viewport.y });
     }
   };
 
   const handlePanMove = (e) => {
     if (!isPanning) return;
-    setPanOffset({
+    setViewport(prev => ({
+      ...prev,
       x: e.clientX - startPanPos.x,
       y: e.clientY - startPanPos.y
-    });
+    }));
   };
 
   const handlePanEnd = () => setIsPanning(false);
-
-  const handleZoom = (delta, mouseX = null, mouseY = null) => {
-    setZoom(prevZoom => {
-      const nextZoom = Math.min(Math.max(prevZoom + delta, 0.25), 3);
-      if (mouseX !== null && mouseY !== null) {
-        setPanOffset(prevOffset => {
-          const scaleRatio = nextZoom / prevZoom;
-          return {
-            x: mouseX - (mouseX - prevOffset.x) * scaleRatio,
-            y: mouseY - (mouseY - prevOffset.y) * scaleRatio
-          };
-        });
-      }
-      return nextZoom;
-    });
-  };
 
   const stats = {
     count: lineup.length,
@@ -371,10 +397,9 @@ export function LineupEditor({ lineupId, initialLineup = [], danceType = 'standa
       setIsSaving(true);
       const { error } = await lineupService.reorderFigures(lineupId, lineup);
       if (!error) {
-        // Force sync the "prevLineupProp" so we don't trigger unnecessary re-syncs
         prevLineupProp.current = lineup;
-        onUpdateFigures(lineup); // Notify parent of final state
-        alert('Studio state synchronized successfully.');
+        onUpdateFigures(lineup);
+        showToast('Canvas state synchronized successfully.', 'success');
       }
     } catch (err) {
       console.error('Save failed:', err);
@@ -383,17 +408,28 @@ export function LineupEditor({ lineupId, initialLineup = [], danceType = 'standa
     }
   };
 
-  const handleCreateNew = async () => {
-     const newName = prompt('Enter name for the new routine:', `${danceName} Routine - Copy`);
-     if (newName) {
-       const { data, error } = await lineupService.createLineup(newName, danceType, danceName);
-       if (data && !error) {
-          for (let i = 0; i < lineup.length; i++) {
-             await lineupService.addFigure(data.id, lineup[i].figure_name || lineup[i].name, i);
-          }
-          window.location.href = `/lineups/${data.id}`;
-       }
-     }
+  const handleResetRoutine = async () => {
+    if (!lineupId || isSaving) return;
+    try {
+      setIsSaving(true);
+      // Sending empty array to clear all figures and trigger physical file deletion on backend
+      const { error } = await lineupService.reorderFigures(lineupId, []);
+      if (!error) {
+        setLineup([]);
+        prevLineupProp.current = [];
+        onUpdateFigures([]);
+        showToast('Canvas reset: Routine cleared and storage purged.', 'success');
+        setIsPromptingNew(false);
+      }
+    } catch (err) {
+      console.error('Reset failed:', err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleOpenResetPrompt = () => {
+    setIsPromptingNew(true);
   };
 
   const handleExport = async () => {
@@ -411,12 +447,11 @@ export function LineupEditor({ lineupId, initialLineup = [], danceType = 'standa
         fontEmbedCSS: '', 
       });
       const link = document.createElement('a');
-      link.download = `ballroom-studio-${danceName || 'routine'}.png`;
+      link.download = `ellegnote-${danceName || 'routine'}.png`;
       link.href = dataUrl;
       link.click();
     } catch (err) {
       console.error('Export failed:', err);
-      alert('Export failed due to browser security restrictions. Try taking a screenshot in Cinematic Mode instead.');
     }
   };
 
@@ -439,8 +474,6 @@ export function LineupEditor({ lineupId, initialLineup = [], danceType = 'standa
 
   const handleDragEnd = async (event) => {
     const { active, over, delta } = event;
-    
-    // Clear active status immediately but handle the specific logic based on snapshot
     const currentActiveFigure = active.data.current?.figure;
     setActiveId(null);
     setActiveFigure(null);
@@ -456,8 +489,6 @@ export function LineupEditor({ lineupId, initialLineup = [], danceType = 'standa
         if (startX > 1600) { startX = 100; startY += TILE_Y_GAP; }
       }
       const { x, y } = findNearestFreeTileBlock(lineup, startX, startY);
-      
-      // Optimistic Update: Add a temporary figure for instant feedback
       const tempId = `temp-${Date.now()}`;
       const tempFigure = { id: tempId, figure_name: figure.name, x, y, duration: 8 };
       setLineup(prev => [...prev, tempFigure]);
@@ -469,19 +500,18 @@ export function LineupEditor({ lineupId, initialLineup = [], danceType = 'standa
     if (active.data.current?.type === 'figure-item') {
       const index = lineup.findIndex(item => item.id === active.id);
       if (index !== -1) {
-        const actualDeltaX = delta.x / zoom;
-        const actualDeltaY = delta.y / zoom;
-        let finalX = Math.max(20, Math.min(4800, Math.round(((lineup[index].x || 100) + actualDeltaX) / GRID_SIZE) * GRID_SIZE));
-        let finalY = Math.max(20, Math.min(4800, Math.round(((lineup[index].y || 100) + actualDeltaY) / GRID_SIZE) * GRID_SIZE));
+        const newList = [...lineup];
+        const actualDeltaX = delta.x / viewport.scale;
+        const actualDeltaY = delta.y / viewport.scale;
+        let finalX = Math.max(20, Math.min(4800, Math.round(((newList[index].x || 100) + actualDeltaX) / GRID_SIZE) * GRID_SIZE));
+        let finalY = Math.max(20, Math.min(4800, Math.round(((newList[index].y || 100) + actualDeltaY) / GRID_SIZE) * GRID_SIZE));
         
         if (isAreaOccupied(finalX, finalY, lineup, active.id)) {
            const nextSafe = findNearestFreeTileBlock(lineup, finalX, finalY);
            finalX = nextSafe.x; finalY = nextSafe.y;
         }
         
-        const newList = [...lineup];
         newList[index] = { ...newList[index], x: finalX, y: finalY };
-        
         setLineup(newList);
         onUpdateFigures(newList);
       }
@@ -522,16 +552,15 @@ export function LineupEditor({ lineupId, initialLineup = [], danceType = 'standa
             isOver={isOverCanvas} 
             activeFigure={activeFigure}
             onSave={handleSaveWorkspace}
-            onCreate={handleCreateNew}
+            onCreate={handleOpenResetPrompt}
             onExport={handleExport}
             isSaving={isSaving}
             stats={stats}
             isCinematic={isCinematic}
             setIsCinematic={setIsCinematic}
-            zoom={zoom}
-            panOffset={panOffset}
+            viewport={viewport}
             onZoom={handleZoom}
-            onReset={() => { setZoom(1.0); setPanOffset({ x: 0, y: 0 }); }}
+            onReset={() => { setViewport({ x: 0, y: 0, scale: 1 }); }}
             lineup={lineup}
             danceType={danceType}
           >
@@ -540,13 +569,21 @@ export function LineupEditor({ lineupId, initialLineup = [], danceType = 'standa
               className={clsx("flex-1 overflow-hidden relative z-10 min-h-[500px] w-full bg-[#0a0a0a]/20 touch-none", isPanning ? "cursor-grabbing" : "cursor-grab")}
               onMouseDown={handlePanStart} onMouseMove={handlePanMove} onMouseUp={handlePanEnd} onMouseLeave={handlePanEnd}
             >
-              <div id="canvas-stage" className="absolute inset-0 p-8 w-[5000px] h-[5000px] transition-transform duration-75 ease-out" style={{ transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${zoom})`, transformOrigin: '0 0' }}>
+              <div id="canvas-stage" className="absolute inset-0 p-8 w-[5000px] h-[5000px] transition-transform duration-75 ease-out" style={{ transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.scale})`, transformOrigin: '0 0' }}>
                 <SequenceConnections lineup={lineup} danceType={danceType} />
                 {lineup.map((figure, index) => (
                   <div key={figure.id} style={{ position: 'absolute', left: figure.x || 100, top: figure.y || 100, zIndex: activeId === figure.id ? 50 : 10 }}>
                     <div className={clsx("transition-opacity duration-300", activeId === figure.id ? "opacity-20" : "opacity-100")}>
                       <FigureCard 
-                        figure={{ ...figure, onEdit: onEditFigure, onDelete: onDeleteFigure, onUpdate: handleUpdateFigure }} 
+                        figure={{ 
+                          ...figure, 
+                          onEdit: onEditFigure, 
+                          onDelete: (id) => {
+                            showToast('Sequence healed: Figure archived', 'success');
+                            onDeleteFigure(id);
+                          }, 
+                          onUpdate: handleUpdateFigure 
+                        }} 
                         pos={`P${index + 1}`}
                         active={index === 0}
                         isDraggable={true}
@@ -558,6 +595,37 @@ export function LineupEditor({ lineupId, initialLineup = [], danceType = 'standa
               </div>
             </div>
           </CanvasContainer>
+
+          {/* Obsidian Toast Notification */}
+          {toast && (
+            <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="bg-[#0e0e0e]/90 backdrop-blur-xl border border-primary/20 px-6 py-3 rounded-full flex items-center gap-3 shadow-2xl">
+                <span className="material-symbols-outlined text-primary text-xl">check_circle</span>
+                <span className="text-[11px] font-black tracking-widest uppercase text-primary/90">
+                  {toast.message}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Obsidian Reset Confirmation Modal */}
+          {isPromptingNew && (
+            <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-[#050505]/80 backdrop-blur-md animate-in fade-in duration-300">
+              <div className="bg-[#0e0e0e] border border-white/5 p-8 rounded-3xl max-w-sm w-full shadow-3xl text-center">
+                <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-500/20">
+                  <span className="material-symbols-outlined text-red-500 text-3xl">restart_alt</span>
+                </div>
+                <h3 className="text-2xl font-black italic uppercase tracking-tighter mb-2">Reset Canvas?</h3>
+                <p className="text-white/40 text-[10px] uppercase font-black tracking-widest mb-8 leading-relaxed">
+                  This will permanently clear all figures on the canvas and purge associated notes and videos.
+                </p>
+                <div className="flex gap-4">
+                  <button onClick={() => setIsPromptingNew(false)} className="flex-1 py-3 text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-colors">Cancel</button>
+                  <button onClick={handleResetRoutine} className="flex-1 btn-neo btn-neo-error">Reset Canvas</button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

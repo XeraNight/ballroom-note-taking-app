@@ -2,7 +2,7 @@ export const DANCES = {
   standard: [
     { 
       name: 'Waltz', 
-      icon: 'skateboarding', 
+      icon: 'waves', 
       tempo: '28–30 MPM (84–90 BPM)',
       info: 'Sústreď sa na Rise & Fall (zdvih a klesanie). Klesanie prebieha na konci doby 3, zdvih začína na 1. Dôležitý je aj Sway (náklon), ktorý pomáha vyvažovať rotáciu.',
       figures: ['Closed Changes', 'Natural Turn', 'Reverse Turn', 'Whisk', 'Chasse from PP', 'Natural Spin Turn', 'Reverse Corte', 'Outside Spin', 'Double Reverse Spin', 'Weave from PP']

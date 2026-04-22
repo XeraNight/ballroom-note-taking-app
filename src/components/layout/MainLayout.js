@@ -5,9 +5,6 @@ import { usePathname } from 'next/navigation';
 
 export function MainLayout({ children }) {
   const pathname = usePathname();
-  
-  // Public Access Version: We removed login/register.
-  // The only full-page route left is the entry/select-dance route if desired.
   const isFullPage = pathname === '/' || pathname === '/select-dance';
 
   if (isFullPage) {

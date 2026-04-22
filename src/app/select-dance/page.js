@@ -2,7 +2,6 @@
 
 import { useDance } from '@/context/DanceContext';
 import { useRouter } from 'next/navigation';
-import { clsx } from 'clsx';
 
 export default function SelectDancePage() {
   const { setType } = useDance();
@@ -15,8 +14,7 @@ export default function SelectDancePage() {
 
   return (
     <main className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-surface">
-      {/* Background with Ambient Glow */}
-      <div className="absolute inset-0 z-0">
+            <div className="absolute inset-0 z-0">
         <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-[#D4AF37]/5 blur-[120px] rounded-full animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-red-600/5 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
       </div>
@@ -24,12 +22,11 @@ export default function SelectDancePage() {
       <div className="relative z-10 w-full max-w-6xl px-12 space-y-16">
         <div className="text-center space-y-4">
           <h1 className="text-6xl font-black tracking-tighter text-white uppercase italic font-headline">Choose Your Discipline</h1>
-          <p className="text-white/40 font-black uppercase tracking-[0.4em] text-[11px]">Select your active studio environment</p>
+          <p className="text-white/40 font-black uppercase tracking-[0.4em] text-[11px]">Select your active dance environment</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          {/* Standard Selection */}
-          <button 
+                    <button 
             onClick={() => handleSelect('standard')}
             className="group relative h-[450px] rounded-[3rem] overflow-hidden glass-panel border border-white/5 hover:border-[#D4AF37]/40 transition-all duration-700 hover:scale-[1.02] shadow-2xl"
           >
@@ -46,8 +43,7 @@ export default function SelectDancePage() {
             </div>
           </button>
 
-          {/* Latin Selection */}
-          <button 
+                    <button 
             onClick={() => handleSelect('latin')}
             className="group relative h-[450px] rounded-[3rem] overflow-hidden glass-panel border border-white/5 hover:border-red-600/40 transition-all duration-700 hover:scale-[1.02] shadow-2xl"
           >

@@ -5,23 +5,27 @@ import { clsx } from 'clsx';
 
 export function EditModal({ isOpen, onClose, figure, onSave, onDelete }) {
   const [notes, setNotes] = useState('');
-  const [videoUrls, setVideoUrls] = useState(['', '', '']); // [Primary, Alt A, Ref B]
-  const [imageUrls, setImageUrls] = useState(['', '']); // [Photo 1, Photo 2]
+  const [duration, setDuration] = useState(8);
+  const [videoUrls, setVideoUrls] = useState(['', '', '']);
+  const [imageUrls, setImageUrls] = useState(['', '']);
   const [uploading, setUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [errorStatus, setErrorStatus] = useState(null);
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
   useEffect(() => {
     if (figure) {
       setNotes(figure.notes || '');
-      // Ensure we have at least 3 slots for videos
+      setDuration(figure.duration || 8);
       const v = [...(figure.video_urls || [])];
       while (v.length < 3) v.push('');
       setVideoUrls(v);
 
-      // Ensure we have 2 slots for images
       const img = [...(figure.image_urls || [])];
       while (img.length < 2) img.push('');
       setImageUrls(img);
+      setErrorStatus(null);
+      setIsConfirmingDelete(false);
     }
   }, [figure]);
 
@@ -31,6 +35,7 @@ export function EditModal({ isOpen, onClose, figure, onSave, onDelete }) {
 
     try {
       setUploading(true);
+      setErrorStatus(null);
       
       const formData = new FormData();
       formData.append('file', file);
@@ -56,8 +61,7 @@ export function EditModal({ isOpen, onClose, figure, onSave, onDelete }) {
         setImageUrls(newUrls);
       }
     } catch (error) {
-      console.error('Error uploading:', error.message);
-      alert(`Upload failed: ${error.message}. Make sure the backend is running.`);
+      setErrorStatus(`Transfer Error: ${error.message}`);
     } finally {
       setUploading(false);
     }
@@ -69,26 +73,30 @@ export function EditModal({ isOpen, onClose, figure, onSave, onDelete }) {
       await onSave({
         ...figure,
         notes,
+        duration: parseInt(duration) || 8,
         video_urls: videoUrls.filter(u => u !== ''),
         image_urls: imageUrls.filter(u => u !== '')
       });
     } catch (err) {
-      console.error('Modal Save Error:', err);
+      setErrorStatus('Synchronization Failed');
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleDelete = async () => {
-    if (confirm('Are you sure you want to remove this figure from your lineup?')) {
-      try {
-        setIsSaving(true);
-        await onDelete(figure.id);
-      } catch (err) {
-        console.error('Modal Delete Error:', err);
-      } finally {
-        setIsSaving(false);
-      }
+    if (!isConfirmingDelete) {
+      setIsConfirmingDelete(true);
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+      await onDelete(figure.id);
+    } catch (err) {
+      setErrorStatus('Removal Failed');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -98,37 +106,39 @@ export function EditModal({ isOpen, onClose, figure, onSave, onDelete }) {
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 bg-black/60 backdrop-blur-sm overflow-hidden animate-in fade-in duration-300">
       <div className="w-full h-full max-w-[1600px] glass-modal rounded-[2.5rem] overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.8)] flex flex-col md:flex-row relative">
         
-        {/* Main Workspace Area */}
         <div className="flex-1 flex flex-col min-h-0 bg-transparent overflow-hidden">
-          {/* Top Bar */}
           <header className="h-28 flex items-center justify-between px-10 border-b border-white/5 shrink-0">
-            <div className="flex flex-col">
-              <span className="text-[10px] font-label font-bold uppercase tracking-[0.25em] text-primary/80 mb-1">Figure Editing</span>
-              <h1 className="text-3xl font-headline font-bold tracking-tight text-white">{figure?.figure_name}</h1>
+            <div className="flex gap-4 items-center">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-label font-bold uppercase tracking-[0.25em] text-primary/80 mb-1">Figure Editing</span>
+                <h1 className="text-3xl font-headline font-bold tracking-tight text-white italic uppercase">{figure?.figure_name}</h1>
+              </div>
+              {errorStatus && (
+                <div className="px-4 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full text-red-500 text-[10px] font-black uppercase tracking-widest animate-pulse">
+                  {errorStatus}
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-6">
               <button 
                 onClick={onClose}
-                className="px-6 py-2.5 rounded-full font-label font-medium text-white/60 hover:text-white hover:bg-white/5 transition-all text-sm"
+                className="px-6 py-2.5 rounded-full font-label font-medium text-white/60 hover:text-white hover:bg-white/5 transition-all text-sm uppercase tracking-widest font-black"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleSave}
                 disabled={uploading || isSaving}
-                className="px-8 py-3 rounded-full font-label font-bold bg-primary text-black shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all text-sm disabled:opacity-50 min-w-[140px]"
+                className="btn-neo btn-neo-primary"
               >
-                {isSaving ? 'Synchronizing...' : (uploading ? 'Uploading...' : 'Save Changes')}
+                {isSaving ? 'Syncing...' : (uploading ? 'Uploading...' : 'Save Changes')}
               </button>
             </div>
           </header>
 
-          {/* Scrollable Content Canvas */}
           <main className="flex-1 overflow-y-auto p-10 space-y-12 custom-scrollbar">
             <div className="grid grid-cols-12 gap-10">
-              {/* Left Section: Video Displays */}
               <div className="col-span-12 lg:col-span-8 space-y-10">
-                {/* Large Video 1: Primary Sequence */}
                 <section className="relative group">
                   <div className="w-full aspect-video rounded-[2rem] overflow-hidden bg-black border border-white/10 shadow-2xl relative">
                     {videoUrls[0] ? (
@@ -154,7 +164,6 @@ export function EditModal({ isOpen, onClose, figure, onSave, onDelete }) {
                   </div>
                 </section>
 
-                {/* Sub Videos Grid: Alt Angles */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {[1, 2].map(idx => (
                     <div key={idx} className="space-y-4">
@@ -179,13 +188,11 @@ export function EditModal({ isOpen, onClose, figure, onSave, onDelete }) {
                 </div>
               </div>
 
-              {/* Right Sidebar: Notes & Photos */}
               <div className="col-span-12 lg:col-span-4 space-y-10">
-                {/* Notes Section */}
-                <section className="glass-panel p-8 rounded-[2rem] flex flex-col h-[400px]">
+                <section className="glass-panel p-8 rounded-[2rem] flex flex-col h-[350px]">
                   <div className="flex items-center gap-3 mb-6">
                     <span className="material-symbols-outlined text-primary text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>notes</span>
-                    <h2 className="font-headline font-bold text-xl tracking-tight uppercase">Curator Notes</h2>
+                    <h2 className="font-headline font-bold text-xl tracking-tight uppercase italic">Curator Notes</h2>
                   </div>
                   <textarea 
                     value={notes}
@@ -193,16 +200,11 @@ export function EditModal({ isOpen, onClose, figure, onSave, onDelete }) {
                     className="flex-1 w-full bg-white/5 border border-white/5 rounded-2xl p-5 font-body text-sm text-white/70 focus:ring-1 focus:ring-primary/40 focus:bg-white/10 outline-none placeholder:text-white/20 resize-none transition-all" 
                     placeholder="Enter technical feedback or choreographic adjustments..."
                   />
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    <span className="px-4 py-1.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider cursor-pointer">#Alignment</span>
-                    <span className="px-4 py-1.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider cursor-pointer">#Timing</span>
-                  </div>
                 </section>
 
-                {/* Photo Slots */}
                 <section className="space-y-6">
                   <div className="flex items-center justify-between px-2">
-                    <h2 className="font-headline font-bold text-xl tracking-tight uppercase">Stills & Mood</h2>
+                    <h2 className="font-headline font-bold text-xl tracking-tight uppercase italic">Stills & Mood</h2>
                   </div>
                   <div className="grid grid-cols-2 gap-5">
                     {[0, 1].map(idx => (
@@ -228,21 +230,46 @@ export function EditModal({ isOpen, onClose, figure, onSave, onDelete }) {
                   </div>
                 </section>
 
-                {/* Metadata/Actions */}
                 <section className="p-8 rounded-[2rem] border border-white/5 bg-white/[0.03] backdrop-blur-md space-y-6">
                   <div className="space-y-5">
                     <div className="flex justify-between items-center">
-                      <span className="text-[10px] text-white/30 uppercase font-bold tracking-[0.15em]">Figure Name</span>
-                      <span className="text-white/90 font-semibold text-sm uppercase italic">{figure?.figure_name}</span>
+                      <span className="text-[10px] text-white/30 uppercase font-black tracking-[0.3em]">Technical Specs</span>
+                      <div className="flex items-center gap-2">
+                        <input 
+                          type="number"
+                          value={duration}
+                          onChange={(e) => setDuration(e.target.value)}
+                          className="w-16 bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-right text-xs text-primary font-black outline-none focus:border-primary/50"
+                        />
+                        <span className="text-[8px] text-white/20 font-black uppercase">Seconds</span>
+                      </div>
                     </div>
                   </div>
-                  <button 
-                    onClick={handleDelete}
-                    disabled={isSaving}
-                    className="w-full py-4 border border-red-900/20 text-red-500/40 hover:text-red-500 hover:bg-red-500/5 rounded-2xl text-[9px] font-black uppercase tracking-[0.3em] transition-all disabled:opacity-50"
-                  >
-                    {isSaving ? 'Removing...' : 'Remove Figure'}
-                  </button>
+                  {isConfirmingDelete ? (
+                    <div className="flex gap-3 mt-4 animate-in fade-in zoom-in-95 duration-200">
+                      <button 
+                        onClick={handleDelete}
+                        disabled={isSaving}
+                        className="flex-1 btn-neo btn-neo-error italic"
+                      >
+                        {isSaving ? 'REMOVING...' : 'CONFIRM REMOVAL'}
+                      </button>
+                      <button 
+                        onClick={() => setIsConfirmingDelete(false)}
+                        className="px-6 py-4 border border-white/10 text-white/40 hover:text-white hover:bg-white/5 rounded-2xl text-[9px] font-black uppercase tracking-[0.4em] transition-all"
+                      >
+                        BACK
+                      </button>
+                    </div>
+                  ) : (
+                    <button 
+                      onClick={handleDelete}
+                      disabled={isSaving}
+                      className="w-full btn-neo btn-neo-error opacity-40 hover:opacity-100 italic"
+                    >
+                      REMOVE FROM LINEUP
+                    </button>
+                  )}
                 </section>
               </div>
             </div>

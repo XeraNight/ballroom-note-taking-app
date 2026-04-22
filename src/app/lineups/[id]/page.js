@@ -52,13 +52,12 @@ export default function WorkspacePage({ params: paramsPromise }) {
       if (error) throw error;
 
       setEditingFigure(null);
-      // Refresh lineup to show potential changes in UI
       const { data, error: fetchError } = await lineupService.getLineupDetail(params.id);
       if (fetchError) throw fetchError;
       if (data) setLineup(data);
     } catch (err) {
       console.error('Error saving figure:', err.message);
-      alert(`Conflict in the Studio: ${err.message}`);
+      console.error(`Conflict in EllegNote: ${err.message}`);
     }
   };
 
@@ -66,8 +65,6 @@ export default function WorkspacePage({ params: paramsPromise }) {
     try {
       const { data, error } = await lineupService.addFigure(params.id, figureName, x, y);
       if (error) throw error;
-      
-      // Update local state immediately for snappiness
       setLineup(prev => ({
         ...prev,
         figures: [...(prev.figures || []), data]
@@ -82,8 +79,6 @@ export default function WorkspacePage({ params: paramsPromise }) {
       ...prev,
       figures: newFigures
     }));
-    
-    // Background sync
     lineupService.reorderFigures(params.id, newFigures).catch(err => {
       console.error('Coordinate sync failed:', err);
     });
@@ -91,11 +86,8 @@ export default function WorkspacePage({ params: paramsPromise }) {
 
   const handleDeleteFigure = async (figureId) => {
     try {
-      // 1. Remove the figure locally from current state
       setLineup(prev => {
         const remainingFigures = prev.figures.filter(f => f.id !== figureId);
-        
-        // 2. Sync the healed sequence with the backend in the background
         lineupService.reorderFigures(params.id, remainingFigures).catch(err => {
            console.error('Background sync failed:', err);
         });
@@ -109,7 +101,7 @@ export default function WorkspacePage({ params: paramsPromise }) {
       setEditingFigure(null);
     } catch (err) {
       console.error('Error healing sequence:', err.message);
-      alert(`Healing failed: ${err.message}`);
+      console.error(`Healing failed: ${err.message}`);
     }
   };
 
@@ -122,8 +114,7 @@ export default function WorkspacePage({ params: paramsPromise }) {
 
   return (
     <div className="bg-background text-on-surface antialiased overflow-hidden h-full relative">
-      {/* Main Content Area */}
-      <main className="pt-8 pb-8 px-12 h-full flex flex-col gap-6 obsidian-bg overflow-hidden relative">
+            <main className="pt-8 pb-8 px-12 h-full flex flex-col gap-6 obsidian-bg overflow-hidden relative">
         <header className="flex justify-between items-end relative z-10 shrink-0">
           <div className="max-w-2xl">
             <p className="text-[#D4AF37] font-black tracking-[0.4em] mb-2 text-[8px] uppercase">
@@ -132,9 +123,6 @@ export default function WorkspacePage({ params: paramsPromise }) {
             <h1 className="text-3xl font-black tracking-tight text-white uppercase font-headline italic leading-none">
               {lineup?.name || 'Loading Routine...'}
             </h1>
-          </div>
-          <div className="flex gap-4">
-             {/* Info widget removed for minimalism */}
           </div>
         </header>
 
@@ -160,8 +148,7 @@ export default function WorkspacePage({ params: paramsPromise }) {
         onDelete={handleDeleteFigure}
       />
 
-      {/* Visual Accents */}
-      <div className="fixed -bottom-20 -right-20 w-[800px] h-[800px] bg-[#D4AF37]/5 blur-[150px] rounded-full pointer-events-none z-0"></div>
+            <div className="fixed -bottom-20 -right-20 w-[800px] h-[800px] bg-[#D4AF37]/5 blur-[150px] rounded-full pointer-events-none z-0"></div>
       <div className="fixed top-1/4 -left-20 w-[600px] h-[600px] bg-[#D4AF37]/3 blur-[120px] rounded-full pointer-events-none z-0"></div>
     </div>
   );
