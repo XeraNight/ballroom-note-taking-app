@@ -63,7 +63,6 @@
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
-
 .glass-panel {
   background: rgba(23, 23, 23, 0.95);
   backdrop-filter: blur(24px) saturate(180%);
@@ -99,7 +98,6 @@
   border: 1px solid rgba(212, 175, 55, 0.4);
   box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
 }
-
 
 .standard-gradient {
   background: linear-gradient(135deg, var(--standard-blue) 0%, var(--standard-lavender) 100%);
@@ -150,13 +148,12 @@ body {
   transition: background-image 1s ease;
 }
 
-/* Exact Uiverse Neo-Brutalist Buttons - Light Accent Edition */
 .btn-neo {
   font-family: inherit !important;
-  padding: 0.4em 1em !important; /* Tightened padding */
+  padding: 0.4em 1em !important; 
   font-weight: 900 !important;
-  font-size: 11px !important; /* Standard compact font size */
-  border: 2px solid white !important; /* Thinner border for smaller size */
+  font-size: 11px !important; 
+  border: 2px solid white !important; 
   border-radius: 0.4em !important;
   box-shadow: 0.15em 0.15em white !important;
   cursor: pointer !important;

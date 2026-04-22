@@ -171,9 +171,7 @@ function CanvasContainer({
   setIsCinematic = () => {}, 
   viewport = { x: 0, y: 0, scale: 1 },
   onReset = () => {},
-  onZoom = () => {},
-  lineup = [],
-  danceType = 'standard'
+  onZoom = () => {}
 }) {
   const { setNodeRef } = useDroppable({
     id: 'canvas-droppable',
@@ -412,7 +410,7 @@ export function LineupEditor({ lineupId, initialLineup = [], danceType = 'standa
     if (!lineupId || isSaving) return;
     try {
       setIsSaving(true);
-      // Sending empty array to clear all figures and trigger physical file deletion on backend
+      
       const { error } = await lineupService.reorderFigures(lineupId, []);
       if (!error) {
         setLineup([]);
@@ -596,7 +594,7 @@ export function LineupEditor({ lineupId, initialLineup = [], danceType = 'standa
             </div>
           </CanvasContainer>
 
-          {/* Obsidian Toast Notification */}
+          {}
           {toast && (
             <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] animate-in fade-in slide-in-from-top-4 duration-300">
               <div className="bg-[#0e0e0e]/90 backdrop-blur-xl border border-primary/20 px-6 py-3 rounded-full flex items-center gap-3 shadow-2xl">
@@ -608,7 +606,7 @@ export function LineupEditor({ lineupId, initialLineup = [], danceType = 'standa
             </div>
           )}
 
-          {/* Obsidian Reset Confirmation Modal */}
+          {}
           {isPromptingNew && (
             <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-[#050505]/80 backdrop-blur-md animate-in fade-in duration-300">
               <div className="bg-[#0e0e0e] border border-white/5 p-8 rounded-3xl max-w-sm w-full shadow-3xl text-center">

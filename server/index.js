@@ -13,21 +13,18 @@ const DB_PATH = path.join(__dirname, 'db.json');
 app.use(cors());
 app.use(bodyParser.json());
 
-// Ensure uploads directory exists
 const UPLOADS_DIR = path.join(__dirname, 'uploads');
 if (!fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR);
 }
 
-// Serve uploaded files statically
 app.use('/uploads', express.static(UPLOADS_DIR));
 
-// Configure Multer Storage
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: (_, file, cb) => {
     cb(null, UPLOADS_DIR);
   },
-  filename: (req, file, cb) => {
+  filename: (_, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     const ext = path.extname(file.originalname);
     cb(null, file.fieldname + '-' + uniqueSuffix + ext);
@@ -36,10 +33,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
   storage: storage,
-  limits: { fileSize: 1024 * 1024 * 500 } // Support up to 500MB
+  limits: { fileSize: 1024 * 1024 * 500 }
 });
 
-// Helper to read/write DB
 const readDB = () => {
   if (!fs.existsSync(DB_PATH)) {
     const initialData = { lineups: [], figures: [] };
@@ -53,20 +49,15 @@ const writeDB = (data) => {
   fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
 };
 
-// Root route for status check
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
   res.send('<h1>💃 Ballroom Note-Taking API is Live</h1><p>Status: Operational</p>');
 });
 
-// --- LINEUP ENDPOINTS (Routine) ---
-
-// List all lineups
-app.get('/lineup/list', (req, res) => {
+app.get('/lineup/list', (_, res) => {
   const db = readDB();
   res.json(db.lineups);
 });
 
-// Get lineup detail with figures
 app.get('/lineup/get', (req, res) => {
   const { id } = req.query;
   const db = readDB();
@@ -77,7 +68,6 @@ app.get('/lineup/get', (req, res) => {
   res.json({ ...lineup, lineup_figures: figures });
 });
 
-// Create lineup
 app.post('/lineup/create', (req, res) => {
   const { name, dance_type, dance_name } = req.body;
   const db = readDB();
@@ -95,7 +85,6 @@ app.post('/lineup/create', (req, res) => {
   res.json(newLineup);
 });
 
-// Delete lineup
 app.post('/lineup/delete', (req, res) => {
   const { id } = req.body;
   const db = readDB();
@@ -105,9 +94,6 @@ app.post('/lineup/delete', (req, res) => {
   res.json({ success: true });
 });
 
-// --- FIGURE ENDPOINTS ---
-
-// Add figure to lineup
 app.post('/figure/add', (req, res) => {
   const { lineup_id, figure_name, order_index, x, y } = req.body;
   const db = readDB();
@@ -130,7 +116,6 @@ app.post('/figure/add', (req, res) => {
   res.json(newFigure);
 });
 
-// Update figure details
 app.post('/figure/update', (req, res) => {
   const { id, ...updates } = req.body;
   const db = readDB();
@@ -142,7 +127,6 @@ app.post('/figure/update', (req, res) => {
   res.json(db.figures[index]);
 });
 
-// Delete figure
 app.post('/figure/delete', (req, res) => {
   const { id } = req.body;
   const db = readDB();
@@ -151,9 +135,8 @@ app.post('/figure/delete', (req, res) => {
   res.json({ success: true });
 });
 
-// Reorder figures or update coordinates (bulk update)
 app.post('/figure/reorder', (req, res) => {
-  const { figures } = req.body; // Array of {id, order_index, x, y}
+  const { figures } = req.body;
   const db = readDB();
   
   figures.forEach(update => {
@@ -169,14 +152,12 @@ app.post('/figure/reorder', (req, res) => {
   res.json({ success: true });
 });
 
-// --- ASSET UPLOAD ENDPOINT ---
 
 app.post('/upload', upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
   
-  // Return the full URL for the frontend to consume
   const protocol = req.protocol;
   const host = req.get('host');
   const fileUrl = `${protocol}://${host}/uploads/${req.file.filename}`;

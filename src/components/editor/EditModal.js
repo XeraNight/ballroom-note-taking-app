@@ -103,7 +103,10 @@ export function EditModal({ isOpen, onClose, figure, onSave, onDelete }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 bg-black/60 backdrop-blur-sm overflow-hidden animate-in fade-in duration-300">
+    <div className={clsx(
+      "fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10",
+      "bg-black/60 backdrop-blur-sm overflow-hidden animate-in fade-in duration-300"
+    )}>
       <div className="w-full h-full max-w-[1600px] glass-modal rounded-[2.5rem] overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.8)] flex flex-col md:flex-row relative">
         
         <div className="flex-1 flex flex-col min-h-0 bg-transparent overflow-hidden">
@@ -129,7 +132,10 @@ export function EditModal({ isOpen, onClose, figure, onSave, onDelete }) {
               <button 
                 onClick={handleSave}
                 disabled={uploading || isSaving}
-                className="btn-neo btn-neo-primary"
+                className={clsx(
+                  "btn-neo",
+                  (uploading || isSaving) ? "opacity-50 cursor-not-allowed" : "btn-neo-primary"
+                )}
               >
                 {isSaving ? 'Syncing...' : (uploading ? 'Uploading...' : 'Save Changes')}
               </button>

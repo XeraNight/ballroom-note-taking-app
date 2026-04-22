@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { clsx } from 'clsx';
 
-
 export function FigureCardView({ 
   figure, 
   active, 
@@ -137,7 +136,6 @@ export function FigureCardView({
     </div>
   );
 }
-
 
 export function FigureCard({ figure, active, pos, isDraggable = true, danceType = 'standard' }) {
   const {
