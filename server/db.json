@@ -160,6 +160,14 @@
       "dance_name": "Viennese Waltz",
       "figures": [],
       "created_at": "2026-04-21T19:54:15.866Z"
+    },
+    {
+      "id": "9ef0ac8c-f24e-421c-b847-51e35e23fcbd",
+      "name": "Waltz Routine",
+      "dance_type": "standard",
+      "dance_name": "Waltz",
+      "figures": [],
+      "created_at": "2026-05-05T09:23:09.315Z"
     }
   ]
 }

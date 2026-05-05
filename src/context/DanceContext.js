@@ -7,19 +7,19 @@ const DanceContext = createContext();
 export function DanceProvider({ children }) {
   const [danceType, setDanceType] = useState('standard');
   useEffect(() => {
-    const saved = localStorage.getItem('obsidian_dance_type');
+    const saved = localStorage.getItem('ellegance_dance_type');
     if (saved) setDanceType(saved);
   }, []);
 
   const toggleDanceType = () => {
     const newType = danceType === 'standard' ? 'latin' : 'standard';
     setDanceType(newType);
-    localStorage.setItem('obsidian_dance_type', newType);
+    localStorage.setItem('ellegance_dance_type', newType);
   };
 
   const setType = (type) => {
     setDanceType(type);
-    localStorage.setItem('obsidian_dance_type', type);
+    localStorage.setItem('ellegance_dance_type', type);
   };
 
   return (

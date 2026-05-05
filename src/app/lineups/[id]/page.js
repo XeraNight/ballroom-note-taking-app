@@ -106,15 +106,15 @@ export default function WorkspacePage({ params: paramsPromise }) {
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center space-y-8">
-      <div className="w-16 h-16 rounded-full border-2 border-primary/20 border-t-primary animate-spin"></div>
-      <div className="text-primary font-headline font-black tracking-[0.5em] animate-pulse uppercase">Initializing Stage</div>
+    <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center space-y-8">
+      <div className="w-16 h-16 rounded-full border-2 border-[#D4AF37]/20 border-t-[#D4AF37] animate-spin"></div>
+      <div className="text-[#D4AF37] font-black tracking-[0.5em] text-[10px] animate-pulse uppercase">Initializing EllegNote</div>
     </div>
   );
 
   return (
     <div className="bg-background text-on-surface antialiased overflow-hidden h-full relative">
-            <main className="pt-8 pb-8 px-12 h-full flex flex-col gap-6 obsidian-bg overflow-hidden relative">
+            <main className="pt-8 pb-8 px-12 h-full flex flex-col gap-6 ellegance-bg overflow-hidden relative">
         <header className="flex justify-between items-end relative z-10 shrink-0">
           <div className="max-w-2xl">
             <p className="text-[#D4AF37] font-black tracking-[0.4em] mb-2 text-[8px] uppercase">

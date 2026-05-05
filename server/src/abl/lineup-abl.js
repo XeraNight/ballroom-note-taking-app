@@ -30,10 +30,7 @@ const LineupAbl = {
 
         const lineups = lineupDao.list();
 
-        return {
-            ...lineups,
-            uuAppErrorMap: validationResult.warningMap
-        };
+        return lineups;
     },
 
     async get(dtoIn) {

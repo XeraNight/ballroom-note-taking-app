@@ -23,9 +23,9 @@ export function Sidebar() {
   const themeBg = isStandard ? 'bg-[#D4AF37]/10' : 'bg-red-500/10';
   
   const currentDances = DANCES[danceType] || [];
+  const lineupList = Array.isArray(lineups?.data) ? lineups.data : [];
 
   const handleDanceClick = async (danceName) => {
-    const lineupList = Array.isArray(lineups?.data) ? lineups.data : [];
     const existing = lineupList.find(l => 
       l.dance_name.toLowerCase() === danceName.toLowerCase() && 
       l.dance_type === danceType
@@ -95,7 +95,7 @@ export function Sidebar() {
            
            <nav className="flex-1 flex flex-col justify-around py-0">
               {currentDances.map((dance) => {
-                const routine = lineups?.data?.find(l => 
+                const routine = lineupList.find(l => 
                   l.dance_name.toLowerCase() === dance.name.toLowerCase() && 
                   l.dance_type === danceType
                 );
@@ -113,6 +113,9 @@ export function Sidebar() {
                           "group-hover/dance:" + themeColor
                         )}>{dance.icon}</span>
                         <span className="text-[10px] font-black tracking-[0.1em] uppercase">{dance.name}</span>
+                        {routine && (
+                          <div className={clsx("w-1 h-1 rounded-full", isStandard ? "bg-[#D4AF37]" : "bg-red-500")}></div>
+                        )}
                       </div>
                       
                                             <div className={clsx(
@@ -127,7 +130,7 @@ export function Sidebar() {
         </div>
 
                 <div className="w-full px-2 mt-4 border-t border-white/5 pt-6 text-center">
-          <p className="text-[8px] font-black text-white/10 uppercase tracking-[0.5em] italic">Obsidian Stage</p>
+          <p className="text-[8px] font-black text-white/10 uppercase tracking-[0.5em] italic">EllegNote</p>
           <p className="text-[7px] font-bold text-white/5 uppercase mt-1">Public Edition v1.0</p>
         </div>
       </div>

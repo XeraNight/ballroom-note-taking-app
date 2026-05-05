@@ -3,7 +3,7 @@ import Providers from "@/components/Providers";
 import { MainLayout } from "@/components/layout/MainLayout";
 
 export const metadata = {
-  title: "Obsidian Stage | Curated Choreography",
+  title: "Ellegance | Curated Choreography",
   description: "A specialized platform for ballroom dance choreography and note-taking.",
 };
 
