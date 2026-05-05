@@ -18,15 +18,19 @@ To ensure the application functions correctly with its persistent database, you 
 The backend handles data persistence using a local JSON database.
 
 1. Open a new terminal.
-2. Navigate to the `server` directory:
+2. After extracting files from ZIP, navigate to the app forlder (might be "ballroom-note-taking-app.main")
+   ```bash
+   cd (folder name)
+   ```
+3. Navigate to the `server` directory:
    ```bash
    cd server
    ```
-3. Install dependencies:
+4. Install dependencies:
    ```bash
    npm install
    ```
-4. Start the server:
+5. Start the server:
    ```bash
    npm start
    ```
@@ -39,16 +43,20 @@ The backend handles data persistence using a local JSON database.
 The frontend provides the interactive user interface.
 
 1. Open a **second** terminal.
-2. Ensure you are in the root directory of the project.
-3. Install dependencies:
+2. After extracting files from ZIP, navigate to the app forlder (might be "ballroom-note-taking-app.main")
+   ```bash
+   cd (folder name)
+   ```
+3. Ensure you are in the root directory of the project. (the forlder name)
+4. Install dependencies:
    ```bash
    npm install
    ```
-4. Start the development server:
+5. Start the development server:
    ```bash
    npm run dev
    ```
-5. Open your browser and navigate to:
+6. Open your browser and navigate to:
    [**http://localhost:3000**](http://localhost:3000)
 
 ---
