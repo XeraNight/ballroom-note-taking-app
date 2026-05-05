@@ -65,10 +65,14 @@ export default function WorkspacePage({ params: paramsPromise }) {
     try {
       const { data, error } = await lineupService.addFigure(params.id, figureName, x, y);
       if (error) throw error;
-      setLineup(prev => ({
-        ...prev,
-        figures: [...(prev.figures || []), data]
-      }));
+      setLineup(prev => {
+        const figures = prev.figures || [];
+        const filtered = figures.filter(f => !f.id.toString().startsWith('temp-'));
+        return {
+          ...prev,
+          figures: [...filtered, data]
+        };
+      });
     } catch (err) {
       console.error('Error adding figure:', err.message);
     }

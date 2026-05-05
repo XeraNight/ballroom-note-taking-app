@@ -17,7 +17,7 @@
       "dance_name": "Waltz",
       "figures": [],
       "created_at": "2026-04-18T20:46:38.934Z",
-      "updated_at": "2026-04-22T10:54:08.084Z"
+      "updated_at": "2026-05-05T10:04:22.025Z"
     },
     {
       "id": "73d19249-9f74-46dc-9e7f-8815a63d2309",
@@ -26,7 +26,8 @@
       "dance_type": "standard",
       "dance_name": "Tango",
       "figures": [],
-      "created_at": "2026-04-18T20:47:30.661Z"
+      "created_at": "2026-04-18T20:47:30.661Z",
+      "updated_at": "2026-05-05T10:04:26.225Z"
     },
     {
       "id": "9c192a92-3b18-4af8-9e6f-93beb2d0a80d",
@@ -166,8 +167,108 @@
       "name": "Waltz Routine",
       "dance_type": "standard",
       "dance_name": "Waltz",
+      "figures": [
+        {
+          "id": "843106a7-487c-4df0-8cc4-2982d49e1c11",
+          "figure_name": "Closed Changes",
+          "x": 120,
+          "y": 120,
+          "duration": 8,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-05-05T09:55:51.489Z",
+          "uuAppErrorMap": {}
+        },
+        {
+          "id": "6139f568-48b3-488c-a52e-6135f97a1023",
+          "figure_name": "Natural Turn",
+          "x": 320,
+          "y": 120,
+          "duration": 8,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-05-05T09:55:55.597Z",
+          "uuAppErrorMap": {}
+        },
+        {
+          "id": "be8885b2-2d9d-40d1-8937-f09666e37df6",
+          "figure_name": "Reverse Turn",
+          "x": 240,
+          "y": 320,
+          "duration": 8,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-05-05T09:55:58.772Z",
+          "uuAppErrorMap": {}
+        }
+      ],
+      "created_at": "2026-05-05T09:23:09.315Z",
+      "updated_at": "2026-05-05T09:56:07.046Z"
+    },
+    {
+      "id": "38de6bc2-87c2-43d0-afaa-55e0c35339eb",
+      "name": "Tango Routine",
+      "dance_type": "standard",
+      "dance_name": "Tango",
+      "figures": [
+        {
+          "id": "ee998b64-0103-4622-83fc-d3e545fbe60b",
+          "figure_name": "Progressive Side Step",
+          "x": 100,
+          "y": 100,
+          "duration": 8,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-05-05T09:56:18.149Z",
+          "uuAppErrorMap": {}
+        },
+        {
+          "id": "b9e6c330-2b65-4cc7-aa51-8b0eda44f74a",
+          "figure_name": "Progressive Side Step",
+          "x": 320,
+          "y": 320,
+          "duration": 8,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-05-05T09:56:18.210Z",
+          "uuAppErrorMap": {}
+        },
+        {
+          "id": "33dc78d8-d493-4bab-8eb2-10373c773fb6",
+          "figure_name": "Progressive Side Step",
+          "x": 400,
+          "y": 80,
+          "duration": 8,
+          "notes": "",
+          "video_urls": [],
+          "image_urls": [],
+          "created_at": "2026-05-05T09:56:18.449Z",
+          "uuAppErrorMap": {}
+        }
+      ],
+      "created_at": "2026-05-05T09:56:10.551Z",
+      "updated_at": "2026-05-05T09:56:41.980Z"
+    },
+    {
+      "id": "7b0c1519-f797-4944-a06e-791710296c43",
+      "name": "Waltz Routine",
+      "dance_type": "standard",
+      "dance_name": "Waltz",
       "figures": [],
-      "created_at": "2026-05-05T09:23:09.315Z"
+      "created_at": "2026-05-05T09:56:44.145Z"
+    },
+    {
+      "id": "ce85bcfc-c307-4775-a7ef-065d42db528a",
+      "name": "Tango Routine",
+      "dance_type": "standard",
+      "dance_name": "Tango",
+      "figures": [],
+      "created_at": "2026-05-05T09:57:01.260Z"
     }
   ]
 }

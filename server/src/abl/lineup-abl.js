@@ -121,11 +121,15 @@ const LineupAbl = {
         if (!lineup) throw validationHelper.buildErrorResponse('error', 'lineupNotFound', 'Lineup not found.');
 
         const oldFigures = lineup.figures || [];
-        const deletedFigures = oldFigures.filter(oldF => !dtoIn.figures.some(newF => newF.id === oldF.id));
+        const deletedFigures = oldFigures.filter(oldF => 
+            !oldF.id.toString().startsWith('temp-') && 
+            !dtoIn.figures.some(newF => newF.id === oldF.id)
+        );
         this._deletePhysicalFiles(deletedFigures);
 
-        lineup.figures = dtoIn.figures;
-        lineupDao.update(lineup);
+        lineup.figures = dtoIn.figures.filter(f => !f.id.toString().startsWith('temp-'));
+        const result = lineupDao.update(lineup);
+        console.log(`[LineupAbl] Sync executed for ${lineup.id}. Success: ${!!result}`);
 
         return {
             success: true,
